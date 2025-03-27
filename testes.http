@@ -1,0 +1,183 @@
+### Cadastrar usuarios
+POST http://127.0.0.1:5000/usuarios/novo
+Content-Type: application/json
+
+{
+  "email": "jackson@empresa.com",
+  "nome": "Jackson Almeida",
+  "permissao": "admin",
+  "senha": "senha123"  
+}
+
+### Atualizar usuário
+PUT http://127.0.0.1:5000/usuarios/1
+Content-Type: application/json
+
+{
+  "nome": "Jackson Atualizado",
+  "permissao": "admin",
+  "senha": "novaSenha123"
+}
+
+### Recuperar senha (redefinir)
+POST http://127.0.0.1:5000/recuperar-senha
+Content-Type: application/json
+
+{
+  "email": "carlos@empresa.com",
+  "nova_senha": "senhaNova456"
+}
+
+### Excluir usuário
+DELETE http://127.0.0.1:5000/usuarios/2
+
+### Login de usuarios
+POST http://127.0.0.1:5000/login
+Content-Type: application/json
+
+{
+  "email": "jackson@empresa.com",
+  "senha": "senha123"
+}
+
+### Logout de usuários
+GET http://127.0.0.1:5000/logout
+
+### Área restrita
+GET http://127.0.0.1:5000/admin-area
+
+### Buscar usuário com ID 1
+GET http://127.0.0.1:5000/usuarios/1
+
+### Listar todos os usuários
+GET http://127.0.0.1:5000/usuarios
+
+###
+###
+
+### Criar tipo de material
+POST http://127.0.0.1:5000/tipos-material
+Content-Type: application/json
+
+{
+  "nome": "Elétrico"
+}
+
+### Editar tipos de material
+PUT http://127.0.0.1:5000/tipos-material/1
+Content-Type: application/json
+
+{
+  "nome": "Barra Redonda"
+}
+
+### Excluir tipos de material
+DELETE http://127.0.0.1:5000/tipos-material/1
+
+### Buscar tipos de material com ID 1
+GET http://127.0.0.1:5000/tipos-material/1
+
+### Listar tipos de material
+GET http://127.0.0.1:5000/tipos-material
+
+###
+###
+
+### Criar unidade de medida
+POST http://127.0.0.1:5000/unidades-medida
+Content-Type: application/json
+
+{
+  "sigla": "L",
+  "descricao": "Litro"
+}
+
+### Editar unidade de medida
+PUT http://127.0.0.1:5000/unidades-medida/1
+Content-Type: application/json
+
+{
+  "sigla": "m",
+  "descricao": "Metro"
+}
+
+### Excluir unidade de medida
+DELETE http://127.0.0.1:5000/unidades-medida/1
+
+### Buscar unidade de medida com ID 1
+GET http://127.0.0.1:5000/unidades-medida/1
+
+### Listar unidades de medida
+GET http://127.0.0.1:5000/unidades-medida
+
+###
+###
+
+### Adicionar material
+POST http://127.0.0.1:5000/materiais
+Content-Type: application/json
+
+{
+  "nome": "BARRA REDONDA 2POL SAE 4140",
+  "tipo_id": 1,
+  "unidade_id": 1
+}
+
+### Editar material
+PUT http://127.0.0.1:5000/materiais/1
+Content-Type: application/json
+
+{
+  "nome": "BARRA REDONDA 2POL SAE 4140 EDITADO",
+  "tipo_id": 1,
+  "unidade_id": 1
+}
+
+### Excluir material
+DELETE http://127.0.0.1:5000/materiais/1
+
+### Buscar material com ID 1
+GET http://127.0.0.1:5000/materiais/1
+
+### Listar materiais
+GET http://127.0.0.1:5000/materiais
+
+###
+###
+
+### Criar fornecedor
+POST http://127.0.0.1:5000/fornecedores
+Content-Type: application/json
+
+{
+  "nome": "EletroFornecedora Ltda",
+  "cnpj": "12.345.678/0001-99",
+  "email": "contato@eletrofornecedora.com",
+  "telefone": "(11) 4002-8922",
+  "contato": "Paulo Andrade",
+  "tipo_id": 1
+}
+
+### Listar fornecedores
+GET http://127.0.0.1:5000/fornecedores
+
+###
+###
+
+### Criar cliente
+POST http://127.0.0.1:5000/clientes
+Content-Type: application/json
+
+{
+  "nome": "Construtora Alfa",
+  "cpf_cnpj": "45.678.123/0001-55",
+  "email": "contato@alfa.com.br",
+  "telefone": "(11) 99999-8888",
+  "contato": "Luciana Castro"
+}
+
+### Listar clientes
+GET http://127.0.0.1:5000/clientes
+
+###
+###
