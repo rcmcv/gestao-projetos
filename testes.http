@@ -181,3 +181,19 @@ GET http://127.0.0.1:5000/clientes
 
 ###
 ###
+
+### Criar status
+POST http://127.0.0.1:5000/status
+Content-Type: application/json
+
+{
+  "nome": "Em andamento"
+}
+
+###
+
+### Listar status
+GET http://127.0.0.1:5000/status
+
+###
+###

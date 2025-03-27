@@ -6,6 +6,8 @@ from app.routes import unidades_routes
 from app.routes import materiais_routes
 from app.routes import fornecedores_routes
 from app.routes import clientes_routes
+from app.routes import status_routes
+
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
@@ -27,5 +29,6 @@ def create_app():
     app.register_blueprint(materiais_routes.bp)
     app.register_blueprint(fornecedores_routes.bp)
     app.register_blueprint(clientes_routes.bp)
+    app.register_blueprint(status_routes.bp)
 
     return app
