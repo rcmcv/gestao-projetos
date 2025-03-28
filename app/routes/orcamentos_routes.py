@@ -55,3 +55,34 @@ def listar_orcamentos_por_projeto(projeto_id):
             'data_orcamento': o.data_orcamento.strftime('%Y-%m-%d') if o.data_orcamento else None
         } for o in orcamentos
     ])
+
+
+# ✅ Atualizar um orçamento
+@bp.route('/orcamentos/<int:id>', methods=['PUT'])
+def editar_orcamento(id):
+    orcamento = Orcamento.query.get(id)
+    if not orcamento:
+        return resposta_json({'erro': 'Orçamento não encontrado.'}, 404)
+
+    dados = request.json
+    orcamento.fornecedor_id = dados.get('fornecedor_id', orcamento.fornecedor_id)
+    orcamento.valor_unitario = dados.get('valor_unitario', orcamento.valor_unitario)
+    orcamento.numero_orcamento = dados.get('numero_orcamento', orcamento.numero_orcamento)
+
+    if dados.get('data_orcamento'):
+        orcamento.data_orcamento = datetime.strptime(dados['data_orcamento'], '%Y-%m-%d')
+
+    db.session.commit()
+    return resposta_json({'mensagem': 'Orçamento atualizado com sucesso.'})
+
+
+# ✅ Excluir um orçamento
+@bp.route('/orcamentos/<int:id>', methods=['DELETE'])
+def excluir_orcamento(id):
+    orcamento = Orcamento.query.get(id)
+    if not orcamento:
+        return resposta_json({'erro': 'Orçamento não encontrado.'}, 404)
+
+    db.session.delete(orcamento)
+    db.session.commit()
+    return resposta_json({'mensagem': 'Orçamento excluído com sucesso.'})

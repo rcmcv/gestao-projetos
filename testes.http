@@ -233,8 +233,8 @@ POST http://127.0.0.1:5000/projetos/1/materiais
 Content-Type: application/json
 
 {
-  "material_id": 1,
-  "quantidade": 20
+  "material_id": 2,
+  "quantidade": 50.50
 }
 
 ### Listar materiais do projeto
@@ -262,12 +262,25 @@ POST http://127.0.0.1:5000/orcamentos
 Content-Type: application/json
 
 {
-  "material_projeto_id": 1,
+  "material_projeto_id": 2,
   "fornecedor_id": 1,
-  "valor_unitario": 13.5,
+  "valor_unitario": 52.80,
   "numero_orcamento": "ORC-1234",
   "data_orcamento": "2024-03-25"
 }
+
+### Editar orçamento
+PUT http://127.0.0.1:5000/orcamentos/1
+Content-Type: application/json
+
+{
+  "valor_unitario": 14.75,
+  "numero_orcamento": "ORC-1234-A",
+  "data_orcamento": "2024-03-28"
+}
+
+### Excluir orçamento
+DELETE http://127.0.0.1:5000/orcamentos/2
 
 ### Listar orçamentos de um projeto
 GET http://127.0.0.1:5000/projetos/1/orcamentos
