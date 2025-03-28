@@ -121,3 +121,19 @@ class Projeto(db.Model):
 
     def __repr__(self):
         return f'<Projeto {self.nome}>'
+
+
+# ✅ Cria a classe MaterialProjeto
+class MaterialProjeto(db.Model):
+    __tablename__ = 'materiais_projeto'
+
+    id = db.Column(db.Integer, primary_key=True)
+    projeto_id = db.Column(db.Integer, db.ForeignKey('projetos.id'), nullable=False)
+    material_id = db.Column(db.Integer, db.ForeignKey('materiais.id'), nullable=False)
+    quantidade = db.Column(db.Float, nullable=False)
+
+    projeto = db.relationship('Projeto', backref='materiais_projeto')
+    material = db.relationship('Material', backref='projetos_usando')
+
+    def __repr__(self):
+        return f'<MaterialProjeto Projeto={self.projeto_id} Material={self.material_id} Qtd={self.quantidade}>'

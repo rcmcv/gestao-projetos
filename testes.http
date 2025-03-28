@@ -118,7 +118,7 @@ POST http://127.0.0.1:5000/materiais
 Content-Type: application/json
 
 {
-  "nome": "BARRA REDONDA 2POL SAE 4140",
+  "nome": "Soda Cáustica",
   "tipo_id": 1,
   "unidade_id": 1
 }
@@ -187,7 +187,7 @@ POST http://127.0.0.1:5000/status
 Content-Type: application/json
 
 {
-  "nome": "Aprovado"
+  "nome": "Em orçamento"
 }
 
 ###
@@ -224,3 +224,29 @@ Content-Type: application/json
 
 ### Listar projetos
 GET http://127.0.0.1:5000/projetos
+
+###
+###
+
+### Adicionar material a um projeto
+POST http://127.0.0.1:5000/projetos/1/materiais
+Content-Type: application/json
+
+{
+  "material_id": 1,
+  "quantidade": 20
+}
+
+### Listar materiais do projeto
+GET http://127.0.0.1:5000/projetos/1/materiais
+
+### Editar quantidade
+PUT http://127.0.0.1:5000/materiais-projeto/1
+Content-Type: application/json
+
+{
+  "quantidade": 35
+}
+
+### Remover material do projeto
+DELETE http://127.0.0.1:5000/materiais-projeto/1
