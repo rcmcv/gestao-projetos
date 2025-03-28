@@ -139,3 +139,22 @@ class MaterialProjeto(db.Model):
 
     def __repr__(self):
         return f'<MaterialProjeto Projeto={self.projeto_id} Material={self.material_id} Qtd={self.quantidade}>'
+
+
+# ✅ Cria a classe Orçamento
+class Orcamento(db.Model):
+    __tablename__ = 'orcamentos'
+
+    id = db.Column(db.Integer, primary_key=True)
+    material_projeto_id = db.Column(db.Integer, db.ForeignKey('materiais_projeto.id'), nullable=False)
+    fornecedor_id = db.Column(db.Integer, db.ForeignKey('fornecedores.id'), nullable=False)
+    valor_unitario = db.Column(db.Float, nullable=False)
+    numero_orcamento = db.Column(db.String(50))
+    arquivo_pdf = db.Column(db.String(200))
+    data_orcamento = db.Column(db.Date)
+
+    material_projeto = db.relationship('MaterialProjeto', backref='orcamentos')
+    fornecedor = db.relationship('Fornecedor', backref='orcamentos')
+
+    def __repr__(self):
+        return f'<Orcamento R$ {self.valor_unitario}>'

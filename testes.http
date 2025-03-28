@@ -118,7 +118,7 @@ POST http://127.0.0.1:5000/materiais
 Content-Type: application/json
 
 {
-  "nome": "Soda Cáustica",
+  "nome": "Soda Limonada",
   "tipo_id": 1,
   "unidade_id": 1
 }
@@ -187,7 +187,7 @@ POST http://127.0.0.1:5000/status
 Content-Type: application/json
 
 {
-  "nome": "Em orçamento"
+  "nome": "Aprovado"
 }
 
 ###
@@ -253,3 +253,21 @@ DELETE http://127.0.0.1:5000/materiais-projeto/1
 
 ### Buscar dinâmica de materiais do tipo 1 com nome contendo "sod"
 GET http://127.0.0.1:5000/materiais/buscar?tipo_id=1&q=sod
+
+###
+###
+
+### Cadastrar orçamento (modo JSON - sem PDF)
+POST http://127.0.0.1:5000/orcamentos
+Content-Type: application/json
+
+{
+  "material_projeto_id": 1,
+  "fornecedor_id": 1,
+  "valor_unitario": 13.5,
+  "numero_orcamento": "ORC-1234",
+  "data_orcamento": "2024-03-25"
+}
+
+### Listar orçamentos
+GET http://127.0.0.1:5000/orcamentos
