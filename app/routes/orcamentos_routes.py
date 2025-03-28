@@ -7,6 +7,7 @@ from app.utils.resposta import resposta_json
 import os
 from datetime import datetime
 from werkzeug.utils import secure_filename
+from app.models.models import MaterialProjeto, Material, Fornecedor
 
 bp = Blueprint('orcamentos', __name__)
 
@@ -32,3 +33,25 @@ def cadastrar_orcamento():
         return resposta_json({'mensagem': 'Orçamento cadastrado com sucesso.'})
     except Exception as e:
         return resposta_json({'erro': str(e)}, 400)
+
+
+# ✅ Listar orçamentos de um projeto
+@bp.route('/projetos/<int:projeto_id>/orcamentos', methods=['GET'])
+def listar_orcamentos_por_projeto(projeto_id):
+    orcamentos = (
+        db.session.query(Orcamento)
+        .join(MaterialProjeto)
+        .filter(MaterialProjeto.projeto_id == projeto_id)
+        .all()
+    )
+
+    return resposta_json([
+        {
+            'id': o.id,
+            'material': o.material_projeto.material.nome,
+            'fornecedor': o.fornecedor.nome,
+            'valor_unitario': o.valor_unitario,
+            'numero_orcamento': o.numero_orcamento,
+            'data_orcamento': o.data_orcamento.strftime('%Y-%m-%d') if o.data_orcamento else None
+        } for o in orcamentos
+    ])

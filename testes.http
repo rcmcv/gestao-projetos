@@ -269,5 +269,5 @@ Content-Type: application/json
   "data_orcamento": "2024-03-25"
 }
 
-### Listar orçamentos
-GET http://127.0.0.1:5000/orcamentos
+### Listar orçamentos de um projeto
+GET http://127.0.0.1:5000/projetos/1/orcamentos
