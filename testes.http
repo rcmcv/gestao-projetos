@@ -187,7 +187,7 @@ POST http://127.0.0.1:5000/status
 Content-Type: application/json
 
 {
-  "nome": "Em andamento"
+  "nome": "Aprovado"
 }
 
 ###
@@ -197,3 +197,30 @@ GET http://127.0.0.1:5000/status
 
 ###
 ###
+
+### Criar projeto (solicitação)
+POST http://127.0.0.1:5000/projetos
+Content-Type: application/json
+
+{
+  "nome": "Reforma Escritório Beta",
+  "descricao": "Reforma do espaço corporativo do cliente.",
+  "cliente_id": 1,
+  "responsavel_id": 1,
+  "status_id": 1,
+  "data_solicitacao": "2024-03-15"
+}
+
+### Atualizar projeto para aprovado com datas
+PUT http://127.0.0.1:5000/projetos/1
+Content-Type: application/json
+
+{
+  "status_id": 2,
+  "status_nome": "Aprovado",
+  "data_inicio": "2024-04-01",
+  "data_fim": "2024-10-01"
+}
+
+### Listar projetos
+GET http://127.0.0.1:5000/projetos

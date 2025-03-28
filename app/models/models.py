@@ -96,3 +96,28 @@ class Status(db.Model):
 
     def __repr__(self):
         return f'<Status {self.nome}>'
+
+
+# ✅ Cria a classe Projeto
+class Projeto(db.Model):
+    __tablename__ = 'projetos'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    descricao = db.Column(db.Text)
+
+    cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
+    cliente = db.relationship('Cliente', backref='projetos')
+
+    responsavel_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    responsavel = db.relationship('Usuario', backref='projetos')
+
+    status_id = db.Column(db.Integer, db.ForeignKey('status.id'), nullable=False)
+    status = db.relationship('Status', backref='projetos')
+
+    data_solicitacao = db.Column(db.Date, nullable=False)  # NOVO campo obrigatório
+    data_inicio = db.Column(db.Date, nullable=True)        # só preenchido se aprovado
+    data_fim = db.Column(db.Date, nullable=True)
+
+    def __repr__(self):
+        return f'<Projeto {self.nome}>'
