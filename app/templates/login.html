@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h2>Tela de Login</h2>
+    {% if erro %}
+        <p style="color:red;">{{ erro }}</p>
+    {% endif %}
+    <form method="post">
+        <label>Email:</label><br>
+        <input type="text" name="email"><br><br>
+
+        <label>Senha:</label><br>
+        <input type="password" name="senha"><br><br>
+
+        <button type="submit">Entrar</button>
+    </form>
+</body>
+</html>

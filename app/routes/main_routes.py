@@ -3,6 +3,6 @@ from flask import Blueprint
 
 bp = Blueprint('main', __name__)
 
-@bp.route('/')
-def index():
+@bp.route('/inicio')
+def home():
     return '🚀 Sistema de Gestão de Projetos Online!'

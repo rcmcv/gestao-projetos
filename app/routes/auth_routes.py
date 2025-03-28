@@ -9,12 +9,6 @@ from app.utils.resposta import resposta_json
 
 bp = Blueprint('auth', __name__)
 
-# 🧪 Rota de teste
-@bp.route('/login')
-def login():
-    return 'Página de Login (a implementar)'
-
-
 # ✅ Listar todos os usuários
 @bp.route('/usuarios')
 def listar_usuarios():
@@ -67,10 +61,10 @@ def realizar_login():
 
 
 # ✅ Logout de usuários
-@bp.route('/logout')
-def logout():
-    session.clear()
-    return resposta_json({'mensagem': 'Logout realizado com sucesso.'})
+# @bp.route('/logout')
+# def logout():
+#    session.clear()
+#    return resposta_json({'mensagem': 'Logout realizado com sucesso.'})
 
 
 # ✅ Área restrita

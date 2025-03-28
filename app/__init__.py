@@ -10,20 +10,19 @@ from app.routes import status_routes
 from app.routes import projetos_routes
 from app.routes import materiais_projeto_routes
 from app.routes import orcamentos_routes
+from app.routes import web_routes
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
-    # Carregar configurações padrão
-    app.config.from_object('config')
+    # Carregar configurações do arquivo config.py dentro da pasta instance/
+    app.config.from_pyfile('config.py')
 
-    # Carregar configurações específicas da instância (como caminho do banco)
-    app.config.from_pyfile('config.py', silent=True)
-
+    # Inicializar extensões
     db.init_app(app)
 
     # Importar e registrar rotas
-    from app.routes import auth_routes, main_routes
+    from app.routes import web_routes, auth_routes, main_routes
     app.register_blueprint(auth_routes.bp)
     app.register_blueprint(main_routes.bp)
     app.register_blueprint(tipos_routes.bp)
@@ -35,5 +34,6 @@ def create_app():
     app.register_blueprint(projetos_routes.bp)
     app.register_blueprint(materiais_projeto_routes.bp)
     app.register_blueprint(orcamentos_routes.bp)
+    app.register_blueprint(web_routes.bp)
 
     return app
