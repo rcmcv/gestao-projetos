@@ -150,11 +150,11 @@ POST http://127.0.0.1:5000/fornecedores
 Content-Type: application/json
 
 {
-  "nome": "EletroFornecedora Ltda",
-  "cnpj": "12.345.678/0001-99",
-  "email": "contato@eletrofornecedora.com",
-  "telefone": "(11) 4002-8922",
-  "contato": "Paulo Andrade",
+  "nome": "Carmehil Ltda",
+  "cnpj": "13.345.678/0001-99",
+  "email": "contato@carmehil.com",
+  "telefone": "(11) 4012-8922",
+  "contato": "Savio Andrade",
   "tipo_id": 1
 }
 
@@ -263,19 +263,19 @@ Content-Type: application/json
 
 {
   "material_projeto_id": 2,
-  "fornecedor_id": 1,
-  "valor_unitario": 52.80,
+  "fornecedor_id": 2,
+  "valor_unitario": 51.50,
   "numero_orcamento": "ORC-1234",
   "data_orcamento": "2024-03-25"
 }
 
 ### Editar orçamento
-PUT http://127.0.0.1:5000/orcamentos/1
+PUT http://127.0.0.1:5000/orcamentos/2
 Content-Type: application/json
 
 {
   "valor_unitario": 14.75,
-  "numero_orcamento": "ORC-1234-A",
+  "numero_orcamento": "ORC-1234-B",
   "data_orcamento": "2024-03-28"
 }
 
@@ -284,3 +284,6 @@ DELETE http://127.0.0.1:5000/orcamentos/2
 
 ### Listar orçamentos de um projeto
 GET http://127.0.0.1:5000/projetos/1/orcamentos
+
+### Relatório de balizamento
+GET http://127.0.0.1:5000/projetos/1/relatorio-balizamento

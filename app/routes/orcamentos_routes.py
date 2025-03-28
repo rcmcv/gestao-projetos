@@ -86,3 +86,36 @@ def excluir_orcamento(id):
     db.session.delete(orcamento)
     db.session.commit()
     return resposta_json({'mensagem': 'Orçamento excluído com sucesso.'})
+
+
+# ✅ Relatório de balizamento por projeto
+@bp.route('/projetos/<int:projeto_id>/relatorio-balizamento', methods=['GET'])
+def relatorio_balizamento(projeto_id):
+    relatorio = []
+
+    # Pega todos os materiais do projeto
+    from app.models.models import MaterialProjeto
+    materiais = MaterialProjeto.query.filter_by(projeto_id=projeto_id).all()
+
+    for m in materiais:
+        orcamentos = m.orcamentos
+
+        if not orcamentos:
+            continue  # pula materiais sem orçamento
+
+        # Descobre o menor valor
+        menor_valor = min(o.valor_unitario for o in orcamentos)
+
+        relatorio.append({
+            "material": m.material.nome,
+            "quantidade": m.quantidade,
+            "orcamentos": [
+                {
+                    "fornecedor": o.fornecedor.nome,
+                    "valor_unitario": o.valor_unitario,
+                    "menor_preco": o.valor_unitario == menor_valor
+                } for o in orcamentos
+            ]
+        })
+
+    return resposta_json(relatorio)
