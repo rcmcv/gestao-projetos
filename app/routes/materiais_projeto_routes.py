@@ -16,6 +16,7 @@ def listar_materiais_do_projeto(projeto_id):
             'id': m.id,
             'material_id': m.material_id,
             'material_nome': m.material.nome,
+            'tipo_material': m.tipo.nome,
             'quantidade': m.quantidade
         } for m in materiais
     ])
@@ -30,9 +31,16 @@ def adicionar_material_ao_projeto(projeto_id):
     if not material_id or not quantidade:
         return resposta_json({'erro': 'Informe material_id e quantidade.'}, 400)
 
+    # Descobre o tipo do material automaticamente
+    from app.models.models import Material
+    material = Material.query.get(material_id)
+    if not material:
+        return resposta_json({'erro': 'Material não encontrado.'}, 404)
+
     associacao = MaterialProjeto(
         projeto_id=projeto_id,
         material_id=material_id,
+        tipo_id=material.tipo_id,  # <- atribui automaticamente
         quantidade=quantidade
     )
 

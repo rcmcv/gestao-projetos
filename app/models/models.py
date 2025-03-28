@@ -130,10 +130,12 @@ class MaterialProjeto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     projeto_id = db.Column(db.Integer, db.ForeignKey('projetos.id'), nullable=False)
     material_id = db.Column(db.Integer, db.ForeignKey('materiais.id'), nullable=False)
+    tipo_id = db.Column(db.Integer, db.ForeignKey('tipos_materiais.id'), nullable=False)  # <- novo campo
     quantidade = db.Column(db.Float, nullable=False)
 
     projeto = db.relationship('Projeto', backref='materiais_projeto')
     material = db.relationship('Material', backref='projetos_usando')
+    tipo = db.relationship('TipoMaterial')
 
     def __repr__(self):
         return f'<MaterialProjeto Projeto={self.projeto_id} Material={self.material_id} Qtd={self.quantidade}>'
