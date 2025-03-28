@@ -60,3 +60,22 @@ def excluir_material(id):
     db.session.delete(material)
     db.session.commit()
     return resposta_json({'mensagem': f'Material {material.nome} excluído com sucesso.'})
+
+# ✅ Rota para buscar materiais por tipo de material
+@bp.route('/materiais/buscar', methods=['GET'])
+def buscar_materiais_por_tipo_e_nome():
+    tipo_id = request.args.get('tipo_id')
+    busca = request.args.get('q', '')  # texto digitado pelo usuário
+
+    if not tipo_id:
+        return resposta_json({'erro': 'tipo_id é obrigatório.'}, 400)
+
+    # Filtra materiais pelo tipo e nome que contenha o texto digitado (case insensitive)
+    materiais = Material.query.filter(
+        Material.tipo_id == tipo_id,
+        Material.nome.ilike(f"%{busca}%")
+    ).all()
+
+    return resposta_json([
+        {'id': m.id, 'nome': m.nome} for m in materiais
+    ])

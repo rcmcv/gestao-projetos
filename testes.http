@@ -118,7 +118,7 @@ POST http://127.0.0.1:5000/materiais
 Content-Type: application/json
 
 {
-  "nome": "Soda Cáustica",
+  "nome": "Soda Limonada",
   "tipo_id": 1,
   "unidade_id": 1
 }
@@ -250,3 +250,6 @@ Content-Type: application/json
 
 ### Remover material do projeto
 DELETE http://127.0.0.1:5000/materiais-projeto/1
+
+### Buscar dinâmica de materiais do tipo 1 com nome contendo "cab"
+GET http://127.0.0.1:5000/materiais/buscar?tipo_id=1&q=sod
