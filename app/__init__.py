@@ -18,7 +18,7 @@ from app.api import usuarios_routes
 from app.api import auth_routes
 from app.api import projetos_routes
 from app.api import materiais_projeto_routes
-
+from app.api import orcamentos_routes
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
