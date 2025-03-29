@@ -232,19 +232,19 @@ GET http://127.0.0.1:5000/api/projetos/
 ###
 
 ### Adicionar material a um projeto
-POST http://127.0.0.1:5000/projetos/2/materiais
+POST http://127.0.0.1:5000/api/projetos/1/materiais
 Content-Type: application/json
 
 {
   "material_id": 3,
-  "quantidade": 50.50
+  "quantidade": 100.50
 }
 
 ### Listar materiais do projeto
-GET http://127.0.0.1:5000/projetos/2/materiais
+GET http://127.0.0.1:5000/api/projetos/1/materiais
 
 ### Editar quantidade
-PUT http://127.0.0.1:5000/materiais-projeto/1
+PUT http://127.0.0.1:5000/api/materiais-projeto/1
 Content-Type: application/json
 
 {
@@ -252,10 +252,10 @@ Content-Type: application/json
 }
 
 ### Remover material do projeto
-DELETE http://127.0.0.1:5000/materiais-projeto/1
+DELETE http://127.0.0.1:5000/api/materiais-projeto/6
 
-### Buscar dinâmica de materiais do tipo 1 com nome contendo "sod"
-GET http://127.0.0.1:5000/materiais/buscar?tipo_id=1&q=sod
+### Buscar dinâmica de materiais do tipo 2 com nome contendo "sod"
+GET http://127.0.0.1:5000/api/materiais/buscar?tipo_id=2&q=bar
 
 ###
 ###

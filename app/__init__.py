@@ -1,6 +1,8 @@
 # Arquivo: app/__init__.py
 from flask import Flask
 from app.extensions import db
+from app.utils.email_utils import mail
+
 from app.routes import tipos_routes
 from app.routes import unidades_routes
 from app.routes import materiais_routes
@@ -11,11 +13,11 @@ from app.routes import projetos_routes
 from app.routes import materiais_projeto_routes
 from app.routes import orcamentos_routes
 from app.routes import web_routes
-from app.utils.email_utils import mail
+
 from app.api import usuarios_routes
 from app.api import auth_routes
 from app.api import projetos_routes
-
+from app.api import materiais_projeto_routes
 
 
 def create_app():
