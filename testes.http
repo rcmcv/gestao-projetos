@@ -3,8 +3,8 @@ POST http://127.0.0.1:5000/usuarios/novo
 Content-Type: application/json
 
 {
-  "email": "jackson@empresa.com",
-  "nome": "Jackson Almeida",
+  "email": "marcio@empresa.com",
+  "nome": "Marcio Rodrigues",
   "permissao": "admin",
   "senha": "senha123"  
 }
@@ -14,9 +14,9 @@ PUT http://127.0.0.1:5000/usuarios/1
 Content-Type: application/json
 
 {
-  "nome": "Jackson Atualizado",
+  "nome": "Jackson Almeida",
   "permissao": "admin",
-  "senha": "novaSenha123"
+  "senha": "senha123"
 }
 
 ### Recuperar senha (redefinir)
@@ -60,7 +60,7 @@ POST http://127.0.0.1:5000/tipos-material
 Content-Type: application/json
 
 {
-  "nome": "Elétrico"
+  "nome": "Serralheria"
 }
 
 ### Editar tipos de material
@@ -88,8 +88,8 @@ POST http://127.0.0.1:5000/unidades-medida
 Content-Type: application/json
 
 {
-  "sigla": "L",
-  "descricao": "Litro"
+  "sigla": "kg",
+  "descricao": "Quilograma"
 }
 
 ### Editar unidade de medida
@@ -118,9 +118,9 @@ POST http://127.0.0.1:5000/materiais
 Content-Type: application/json
 
 {
-  "nome": "Soda Limonada",
-  "tipo_id": 1,
-  "unidade_id": 1
+  "nome": "Cantoneira 50mm",
+  "tipo_id": 3,
+  "unidade_id": 2
 }
 
 ### Editar material
@@ -150,8 +150,8 @@ POST http://127.0.0.1:5000/fornecedores
 Content-Type: application/json
 
 {
-  "nome": "Carmehil Ltda",
-  "cnpj": "13.345.678/0001-99",
+  "nome": "SV Elétrica Ltda",
+  "cnpj": "15.345.678/0001-99",
   "email": "contato@carmehil.com",
   "telefone": "(11) 4012-8922",
   "contato": "Savio Andrade",
@@ -169,8 +169,8 @@ POST http://127.0.0.1:5000/clientes
 Content-Type: application/json
 
 {
-  "nome": "Construtora Alfa",
-  "cpf_cnpj": "45.678.123/0001-55",
+  "nome": "Ultragaz",
+  "cpf_cnpj": "46.678.123/0001-55",
   "email": "contato@alfa.com.br",
   "telefone": "(11) 99999-8888",
   "contato": "Luciana Castro"
@@ -187,7 +187,7 @@ POST http://127.0.0.1:5000/status
 Content-Type: application/json
 
 {
-  "nome": "Aprovado"
+  "nome": "Cancelado"
 }
 
 ###
@@ -198,16 +198,16 @@ GET http://127.0.0.1:5000/status
 ###
 ###
 
-### Criar projeto (solicitação)
+### Criar serviço (solicitação)
 POST http://127.0.0.1:5000/projetos
 Content-Type: application/json
 
 {
-  "nome": "Reforma Escritório Beta",
+  "nome": "Eixo cabine pintura p45",
   "descricao": "Reforma do espaço corporativo do cliente.",
-  "cliente_id": 1,
+  "cliente_id": 2,
   "responsavel_id": 1,
-  "status_id": 1,
+  "status_id": 2,
   "data_solicitacao": "2024-03-15"
 }
 
@@ -229,16 +229,16 @@ GET http://127.0.0.1:5000/projetos
 ###
 
 ### Adicionar material a um projeto
-POST http://127.0.0.1:5000/projetos/1/materiais
+POST http://127.0.0.1:5000/projetos/2/materiais
 Content-Type: application/json
 
 {
-  "material_id": 2,
+  "material_id": 3,
   "quantidade": 50.50
 }
 
 ### Listar materiais do projeto
-GET http://127.0.0.1:5000/projetos/1/materiais
+GET http://127.0.0.1:5000/projetos/2/materiais
 
 ### Editar quantidade
 PUT http://127.0.0.1:5000/materiais-projeto/1

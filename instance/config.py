@@ -7,3 +7,4 @@ DATABASE = os.path.join(BASE_DIR, 'gestao.db')
 SECRET_KEY = 'chave-secreta-supersegura'  # Trocar por algo mais forte depois
 SQLALCHEMY_DATABASE_URI = f'sqlite:///{DATABASE}'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+

@@ -1,0 +1,35 @@
+<!-- # Arquivo: app/templates/recuperar_senha.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar Senha</title>
+</head>
+<body>
+
+    <!-- Título da página -->
+    <h2>Recuperar Senha</h2>
+
+    <!-- Exibe mensagem de sucesso ou erro após enviar o formulário -->
+    {% if mensagem %}
+        <p>{{ mensagem }}</p>
+    {% endif %}
+
+    <!-- Formulário de recuperação de senha: envia email para a rota via POST -->
+    <form method="post">
+
+        <!-- Campo para o usuário digitar o email -->
+        <label>Digite seu e-mail:</label><br>
+        <input type="email" name="email" required><br><br>
+
+        <!-- Botão para enviar o formulário e acionar envio da nova senha -->
+        <button type="submit">Enviar nova senha</button>
+    </form>
+
+    <!-- Link para voltar à tela de login -->
+    <p>
+        <a href="{{ url_for('web.login') }}">Voltar ao login</a>
+    </p>
+
+</body>
+</html>

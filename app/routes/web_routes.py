@@ -36,3 +36,33 @@ def dashboard():
 def logout():
     session.clear()
     return redirect(url_for('web.login'))
+
+
+# ✅ Rota para exibir o formulário de recuperação de senha e tratar o envio
+@bp.route('/recuperar-senha', methods=['GET', 'POST'])
+def recuperar_senha():
+    mensagem = None  # Variável para exibir feedback ao usuário (erro ou sucesso)
+
+    # Se o formulário for enviado (método POST)
+    if request.method == 'POST':
+        email = request.form.get('email')  # Captura o e-mail digitado pelo usuário
+
+        # Busca o usuário no banco com base no e-mail informado
+        usuario = Usuario.query.filter_by(email=email).first()
+
+        # Se encontrou o usuário no banco
+        if usuario:
+            # Importa a função de utilitário para envio de nova senha
+            from app.utils.email_utils import enviar_nova_senha
+
+            # Gera nova senha, envia por e-mail e atualiza no banco
+            nova_senha = enviar_nova_senha(usuario.email)
+
+            # Define mensagem de sucesso
+            mensagem = 'Nova senha enviada para o e-mail informado.'
+        else:
+            # Define mensagem de erro se o e-mail não for encontrado
+            mensagem = 'E-mail não encontrado.'
+
+    # Renderiza a página HTML com o formulário e, se houver, exibe a mensagem
+    return render_template('recuperar_senha.html', mensagem=mensagem)
