@@ -1,7 +1,7 @@
 # Arquivo: app/api/unidades_routes.py
 from flask import Blueprint, request
 from app import db
-from app.models.models import Unidade
+from app.models.models import UnidadeMedida
 from app.utils.resposta import resposta_json
 
 bp = Blueprint('api_unidades', __name__, url_prefix='/api/unidades')
@@ -10,7 +10,7 @@ bp = Blueprint('api_unidades', __name__, url_prefix='/api/unidades')
 # ✅ Listar todas as unidades
 @bp.route('/', methods=['GET'])
 def listar_unidades():
-    unidades = Unidade.query.all()
+    unidades = UnidadeMedida.query.all()
     lista = [{'id': u.id, 'nome': u.nome, 'sigla': u.sigla} for u in unidades]
     return resposta_json(lista)
 
@@ -19,7 +19,7 @@ def listar_unidades():
 @bp.route('/', methods=['POST'])
 def criar_unidade():
     dados = request.json
-    unidade = Unidade(
+    unidade = UnidadeMedida(
         nome=dados.get('nome'),
         sigla=dados.get('sigla')
     )
@@ -31,7 +31,7 @@ def criar_unidade():
 # ✅ Atualizar unidade
 @bp.route('/<int:id>', methods=['PUT'])
 def atualizar_unidade(id):
-    unidade = Unidade.query.get(id)
+    unidade = UnidadeMedida.query.get(id)
     if not unidade:
         return resposta_json({'erro': 'Unidade não encontrada.'}, 404)
 
@@ -45,7 +45,7 @@ def atualizar_unidade(id):
 # ✅ Excluir unidade
 @bp.route('/<int:id>', methods=['DELETE'])
 def excluir_unidade(id):
-    unidade = Unidade.query.get(id)
+    unidade = UnidadeMedida.query.get(id)
     if not unidade:
         return resposta_json({'erro': 'Unidade não encontrada.'}, 404)
 
