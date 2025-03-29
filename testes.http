@@ -1,10 +1,10 @@
 ### Cadastrar usuarios
-POST http://127.0.0.1:5000/usuarios/novo
+POST http://127.0.0.1:5000/api/usuarios/novo
 Content-Type: application/json
 
 {
-  "email": "garagedeideias@gmail.com",
-  "nome": "Roberto Viana",
+  "email": "rcmcv@gmail.com",
+  "nome": "RCMCV",
   "permissao": "admin",
   "senha": "senha123"  
 }
@@ -50,7 +50,7 @@ GET http://127.0.0.1:5000/admin-area
 GET http://127.0.0.1:5000/usuarios/1
 
 ### Listar todos os usuários
-GET http://127.0.0.1:5000/usuarios
+GET http://127.0.0.1:5000/api/usuarios
 
 ###
 ###

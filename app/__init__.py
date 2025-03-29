@@ -12,6 +12,8 @@ from app.routes import materiais_projeto_routes
 from app.routes import orcamentos_routes
 from app.routes import web_routes
 from app.utils.email_utils import mail
+from app.api import usuarios_routes
+
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
@@ -37,5 +39,7 @@ def create_app():
     app.register_blueprint(materiais_projeto_routes.bp)
     app.register_blueprint(orcamentos_routes.bp)
     app.register_blueprint(web_routes.bp)
+
+    app.register_blueprint(usuarios_routes.bp)
 
     return app
