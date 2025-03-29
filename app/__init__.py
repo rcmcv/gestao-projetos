@@ -13,6 +13,7 @@ from app.routes import orcamentos_routes
 from app.routes import web_routes
 from app.utils.email_utils import mail
 from app.api import usuarios_routes
+from app.api import auth_routes
 
 
 def create_app():
@@ -26,7 +27,9 @@ def create_app():
     mail.init_app(app)
 
     # Importar e registrar rotas
-    from app.routes import web_routes, auth_routes, main_routes
+    from app.routes import web_routes, main_routes
+    from app.api import auth_routes
+
     app.register_blueprint(auth_routes.bp)
     app.register_blueprint(main_routes.bp)
     app.register_blueprint(tipos_routes.bp)

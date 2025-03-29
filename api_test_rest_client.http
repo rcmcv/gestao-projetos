@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ### Atualizar usuário
-PUT http://127.0.0.1:5000/usuarios/1
+PUT http://127.0.0.1:5000/api/usuarios/1
 Content-Type: application/json
 
 {
@@ -20,19 +20,28 @@ Content-Type: application/json
 }
 
 ### Recuperar senha (redefinir)
-POST http://127.0.0.1:5000/recuperar-senha
+POST http://127.0.0.1:5000/api/recuperar-senha
 Content-Type: application/json
 
 {
-  "email": "carlos@empresa.com",
-  "nova_senha": "senhaNova456"
+  "email": "rcmcv@gmail.com",
+  "nova_senha": "senha123"
 }
 
+### Buscar usuário com ID 1
+GET http://127.0.0.1:5000/api/usuarios/1
+
 ### Excluir usuário
-DELETE http://127.0.0.1:5000/usuarios/1
+DELETE http://127.0.0.1:5000/api/usuarios/1
+
+### Listar todos os usuários
+GET http://127.0.0.1:5000/api/usuarios
+
+###
+###
 
 ### Login de usuarios
-POST http://127.0.0.1:5000/login
+POST http://127.0.0.1:5000/api/login
 Content-Type: application/json
 
 {
@@ -41,16 +50,10 @@ Content-Type: application/json
 }
 
 ### Logout de usuários
-GET http://127.0.0.1:5000/logout
+POST http://127.0.0.1:5000/api/logout
 
 ### Área restrita
-GET http://127.0.0.1:5000/admin-area
-
-### Buscar usuário com ID 1
-GET http://127.0.0.1:5000/usuarios/1
-
-### Listar todos os usuários
-GET http://127.0.0.1:5000/api/usuarios
+GET http://127.0.0.1:5000/api/admin-area
 
 ###
 ###
