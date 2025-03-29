@@ -3,8 +3,8 @@ POST http://127.0.0.1:5000/usuarios/novo
 Content-Type: application/json
 
 {
-  "email": "marcio@empresa.com",
-  "nome": "Marcio Rodrigues",
+  "email": "garagedeideias@gmail.com",
+  "nome": "Roberto Viana",
   "permissao": "admin",
   "senha": "senha123"  
 }

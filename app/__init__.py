@@ -11,6 +11,7 @@ from app.routes import projetos_routes
 from app.routes import materiais_projeto_routes
 from app.routes import orcamentos_routes
 from app.routes import web_routes
+from app.utils.email_utils import mail
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
@@ -20,6 +21,7 @@ def create_app():
 
     # Inicializar extensões
     db.init_app(app)
+    mail.init_app(app)
 
     # Importar e registrar rotas
     from app.routes import web_routes, auth_routes, main_routes

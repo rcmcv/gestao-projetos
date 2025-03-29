@@ -60,11 +60,11 @@ def realizar_login():
         return resposta_json({'erro': 'Email ou senha inválidos'}), 401
 
 
-# ✅ Logout de usuários
-# @bp.route('/logout')
-# def logout():
-#    session.clear()
-#    return resposta_json({'mensagem': 'Logout realizado com sucesso.'})
+#✅ Logout de usuários
+@bp.route('/api/logout')
+def logout():
+    session.clear()
+    return resposta_json({'mensagem': 'Logout realizado com sucesso.'})
 
 
 # ✅ Área restrita
@@ -127,7 +127,7 @@ def buscar_usuario(id):
 
 
 # 🔁 Recuperar senha de usuário existente
-@bp.route('/recuperar-senha', methods=['POST'])
+@bp.route('/api/recuperar-senha', methods=['POST'])
 def recuperar_senha():
     dados = request.json
     email = dados.get('email')
