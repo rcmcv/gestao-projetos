@@ -201,21 +201,21 @@ GET http://127.0.0.1:5000/status
 ###
 ###
 
-### Criar serviço (solicitação)
-POST http://127.0.0.1:5000/projetos
+### Criar novo projeto
+POST http://127.0.0.1:5000/api/projetos/
 Content-Type: application/json
 
 {
-  "nome": "Eixo cabine pintura p45",
-  "descricao": "Reforma do espaço corporativo do cliente.",
-  "cliente_id": 2,
-  "responsavel_id": 1,
-  "status_id": 2,
-  "data_solicitacao": "2024-03-15"
+  "nome": "Nova obra",
+  "descricao": "Projeto para construção",
+  "cliente_id": 1,
+  "responsavel_id": 2,
+  "status_id": 1,
+  "data_solicitacao": "2025-03-29"
 }
 
 ### Atualizar projeto para aprovado com datas
-PUT http://127.0.0.1:5000/projetos/1
+PUT http://127.0.0.1:5000/api/projetos/4
 Content-Type: application/json
 
 {
@@ -226,7 +226,7 @@ Content-Type: application/json
 }
 
 ### Listar projetos
-GET http://127.0.0.1:5000/projetos
+GET http://127.0.0.1:5000/api/projetos/
 
 ###
 ###

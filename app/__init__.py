@@ -14,6 +14,8 @@ from app.routes import web_routes
 from app.utils.email_utils import mail
 from app.api import usuarios_routes
 from app.api import auth_routes
+from app.api import projetos_routes
+
 
 
 def create_app():
