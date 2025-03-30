@@ -6,6 +6,7 @@ venv/
 # Configurações locais e sensíveis
 instance/
 app/instance/config.py
+*.db
 
 # Cache do Python
 __pycache__/
