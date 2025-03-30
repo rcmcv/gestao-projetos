@@ -1,6 +1,34 @@
+# Arquivos de ambiente virtual
 venv/
+.env
+*.env
+
+# Configurações locais e sensíveis
+instance/
+app/instance/config.py
+
+# Cache do Python
 __pycache__/
 *.pyc
-instance/
-.env
+*.pyo
+*.pyd
+
+# Banco de dados local (caso use SQLite temporariamente)
+*.sqlite3
 *.db
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos temporários
+*.log
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# Arquivos de editor
+.vscode/
+.idea/
+*.code-workspace
