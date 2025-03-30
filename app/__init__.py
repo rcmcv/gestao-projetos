@@ -1,28 +1,39 @@
-# Arquivo: app/__init__.py
-
+import os
 from flask import Flask
-from app.extensions import db
-from app.utils.email_utils import mail
-
-# ✅ Importa todos os blueprints da interface web (rotas HTML)
-from app.routes import (web_routes)
-
-# ✅ Função centralizada para registrar todas as rotas da API REST
+from dotenv import load_dotenv
+from .extensions import db, mail
+from app.routes import web_routes
 from app.api import registrar_rotas_api
 
-# 🔧 Função que cria e configura a aplicação Flask
+load_dotenv()
+
 def create_app():
-    # Cria a aplicação com suporte a pasta 'instance/' para configs
+    # 🔹 Cria a aplicação e define que ela pode carregar configs da pasta 'instance'
     app = Flask(__name__, instance_relative_config=True)
 
-    # 🔒 Carrega configurações da instância (como o banco e chave secreta)
-    app.config.from_pyfile('config.py')
+    # 🔹 Lê o caminho do banco da variável de ambiente
+    raw_db_uri = os.getenv("DATABASE_URI", "sqlite:///instance/gestao.db")
 
-    # 🔌 Inicializa as extensões do sistema (DB e Mail)
+    # 🔹 Se o caminho for relativo (começa com "sqlite:///instance"), torna-o absoluto
+    if raw_db_uri.startswith("sqlite:///instance"):
+        db_path = os.path.join(app.instance_path, 'gestao.db')
+        db_uri = f"sqlite:///{db_path}"
+    else:
+        db_uri = raw_db_uri
+
+    # 🔹 Aplica a configuração no app
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'padrao')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # 🔹 Inicializa as extensões
     db.init_app(app)
     mail.init_app(app)
 
-    # 🌐 Registra todos os blueprints da interface web
+    # 🔹 (Opcional) Exibe o caminho real do banco no terminal
+    print("📁 Caminho final do banco:", db_uri)
+
+    # 🔹 Registra rotas web
     app.register_blueprint(web_routes)
 
     # 📡 Registra rotas da API REST com prefixo /api

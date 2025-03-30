@@ -51,27 +51,31 @@ def logout():
     flash('Logout realizado com sucesso.', 'info')
     return redirect(url_for('web.login'))
 
-# ✅ Recuperar senha – formulário para solicitar nova senha
+# ✅ Rota para recuperação de senha
 @web.route('/recuperar-senha', methods=['GET', 'POST'], endpoint='recuperar_senha')
 def recuperar_senha_form():
     if request.method == 'POST':
         email = request.form.get('email')
 
+        if not email:
+            flash('Por favor, informe um e-mail válido.', 'warning')
+            return redirect(url_for('web.recuperar_senha'))
+
         usuario = Usuario.query.filter_by(email=email).first()
 
         if not usuario:
-            erro = 'E-mail não encontrado.'
-            return render_template('recuperar_senha.html', erro=erro)
+            flash('E-mail não encontrado no sistema.', 'danger')
+            return redirect(url_for('web.recuperar_senha'))
 
-        # Gera nova senha aleatória e envia por e-mail
-        nova_senha = enviar_nova_senha(email)
-        usuario.senha = generate_password_hash(nova_senha)
-        db.session.commit()
+        try:
+            enviar_nova_senha(email)
+            flash('Nova senha enviada para seu e-mail.', 'success')
+        except Exception as e:
+            flash('Erro ao enviar o e-mail. Tente novamente mais tarde.', 'danger')
+            print(f"[ERRO] Falha no envio do e-mail: {e}")  # Para log em terminal
 
-        flash('Nova senha enviada para o e-mail informado.', 'success')
         return redirect(url_for('web.login'))
 
-    # Requisição GET → renderiza o formulário de recuperação
     return render_template('recuperar_senha.html')
 
 # ✅ Redireciona rota raiz para a tela de login

@@ -10,10 +10,16 @@
     <!-- Título da página -->
     <h2>Recuperar Senha</h2>
 
-    <!-- Exibe mensagem de sucesso ou erro após enviar o formulário -->
-    {% if mensagem %}
-        <p>{{ mensagem }}</p>
-    {% endif %}
+    <!-- ✅ Bloco para exibir mensagens flash (sucesso ou erro) -->
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% if mensagens %}
+            <ul>
+                {% for categoria, mensagem in mensagens %}
+                    <li><strong>{{ categoria|capitalize }}:</strong> {{ mensagem }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
     <!-- Formulário de recuperação de senha: envia email para a rota via POST -->
     <form method="post">

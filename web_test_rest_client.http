@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "email": "rcmcv@gmail.com",
-  "nome": "RCMCV",
+  "nome": "Roberto Viana",
   "permissao": "admin",
   "senha": "senha123"  
 }

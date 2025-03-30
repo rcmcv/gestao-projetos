@@ -3,6 +3,8 @@ from app.extensions import db
 
 # ✅ Cria a classe Usuario
 class Usuario(db.Model):
+    __tablename__ = 'usuarios'
+
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
@@ -109,7 +111,7 @@ class Projeto(db.Model):
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
     cliente = db.relationship('Cliente', backref='projetos')
 
-    responsavel_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    responsavel_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
     responsavel = db.relationship('Usuario', backref='projetos')
 
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'), nullable=False)
