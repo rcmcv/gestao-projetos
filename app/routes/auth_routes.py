@@ -13,24 +13,35 @@ from .web_routes import web  # Usamos o blueprint "web" unificado para todas as 
 @web.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        # Obtém os dados do formulário
         email = request.form.get('email')
         senha = request.form.get('senha')
 
+        # Busca o usuário pelo email
         usuario = Usuario.query.filter_by(email=email).first()
 
+        # Verifica se o usuário existe e se a senha está correta
         if usuario and check_password_hash(usuario.senha, senha):
-            # Login OK → salva dados do usuário na sessão
+            # Login OK → salva os dados do usuário na sessão
             session['usuario_id'] = usuario.id
             session['usuario_nome'] = usuario.nome
+            session['usuario_email'] = usuario.email
             session['usuario_permissao'] = usuario.permissao
 
+            # Exibe mensagem de boas-vindas
             flash(f'Bem-vindo, {usuario.nome}!', 'success')
-            return redirect(url_for('web.pagina_inicial'))  # Redireciona após login
+
+            # Redireciona para a página inicial do sistema
+            return redirect(url_for('web.pagina_inicial'))
         else:
+            # Email ou senha incorretos → exibe mensagem de erro
             erro = 'Email ou senha inválidos.'
             return render_template('login.html', erro=erro)
 
-    # Requisição GET → renderiza o formulário de login
+    # Requisição GET → limpa mensagens antigas (ex: logout) da sessão
+    session.pop('_flashes', None)
+
+    # Renderiza o formulário de login
     return render_template('login.html')
 
 # ✅ Logout – limpa a sessão do usuário e redireciona para login
@@ -75,3 +86,26 @@ def pagina_inicial():
         return redirect(url_for('web.login'))
 
     return render_template('index.html')
+
+# ✅ Exclui um usuário
+@web.route('/usuarios/excluir/<int:id>', methods=['POST'])
+def excluir_usuario(id):
+    # Verifica se há usuário logado
+    if 'usuario_id' not in session:
+        flash('Você precisa estar logado para realizar essa ação.', 'danger')
+        return redirect(url_for('web.login'))
+
+    # Impede que o próprio usuário se exclua
+    if session['usuario_id'] == id:
+        flash('Você não pode excluir o seu próprio usuário enquanto estiver logado.', 'warning')
+        return redirect(url_for('web.listar_usuarios'))
+
+    usuario = Usuario.query.get(id)
+    if not usuario:
+        flash('Usuário não encontrado.', 'danger')
+        return redirect(url_for('web.listar_usuarios'))
+
+    db.session.delete(usuario)
+    db.session.commit()
+    flash('Usuário excluído com sucesso.', 'success')
+    return redirect(url_for('web.listar_usuarios'))

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Usuários{% endblock %}
+
+{% block conteudo %}
+<div class="container mt-4">
+    <h2>Usuários</h2>
+
+    <!-- Botão para adicionar novo usuário -->
+    <a href="{{ url_for('web.novo_usuario') }}" class="btn btn-primary mb-3">➕ Novo Usuário</a>
+
+    <!-- Tabela de usuários -->
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Permissão</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.nome }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>{{ usuario.permissao }}</td>
+                <td>
+                    <!-- Botão para editar -->
+                    <a href="{{ url_for('web.editar_usuario', id=usuario.id) }}" class="btn btn-sm btn-warning">✏️ Editar</a>
+
+                    <!-- Botão para excluir (com confirmação) -->
+                    <form action="{{ url_for('web.excluir_usuario', id=usuario.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
+                        <button type="submit" class="btn btn-sm btn-danger">🗑️ Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">Nenhum usuário cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

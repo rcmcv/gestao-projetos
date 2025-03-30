@@ -12,6 +12,8 @@ from .status_routes import web as status_routes
 from .tipos_routes import web as tipos_routes
 from .unidades_routes import web as unidades_routes
 from .web_routes import web as web_routes  # 👈 Aqui está o blueprint "web"
+from .usuarios_routes import web as usuarios_routes
+
 
 # 🔹 Opcional: podemos expor esses blueprints num dicionário se quisermos
 # usar isso de forma mais dinâmica futuramente.

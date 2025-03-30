@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+
+<h2>{{ 'Editar Usuário' if usuario else 'Novo Usuário' }}</h2>
+
+<!-- Formulário de criação ou edição de usuário -->
+<form method="POST">
+    <!-- Nome -->
+    <div class="mb-3">
+        <label for="nome" class="form-label">Nome:</label>
+        <input type="text" name="nome" id="nome" class="form-control" required value="{{ usuario.nome if usuario else '' }}">
+    </div>
+
+    <!-- E-mail -->
+    <div class="mb-3">
+        <label for="email" class="form-label">E-mail:</label>
+        <input type="email" name="email" id="email" class="form-control" required value="{{ usuario.email if usuario else '' }}">
+    </div>
+
+    <!-- Senha (só obrigatória no cadastro) -->
+    <div class="mb-3">
+        <label for="senha" class="form-label">Senha:</label>
+        <input type="password" name="senha" id="senha" class="form-control" {% if not usuario %}required{% endif %}>
+        {% if usuario %}
+            <small class="text-muted">Preencha apenas se deseja alterar a senha.</small>
+        {% endif %}
+    </div>
+
+    <!-- Permissão -->
+    <div class="mb-3">
+        <label for="permissao" class="form-label">Permissão:</label>
+        <select name="permissao" id="permissao" class="form-select" required>
+            <option value="">Selecione...</option>
+            <option value="admin" {% if usuario and usuario.permissao == 'admin' %}selected{% endif %}>Administrador</option>
+            <option value="comum" {% if usuario and usuario.permissao == 'comum' %}selected{% endif %}>Operacional</option>
+        </select>
+    </div>
+
+    <!-- Ações -->
+    <button type="submit" class="btn btn-success">💾 Salvar</button>
+    <a href="{{ url_for('web.listar_usuarios') }}" class="btn btn-secondary">↩️ Voltar</a>
+</form>
+
+{% endblock %}

@@ -1,12 +1,16 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Gestão de Projetos{% endblock %}</title>
 </head>
 <body>
+    <!-- ✅ Cabeçalho -->
+    <header>
+        <h1>Gestão de Projetos</h1>
+    </header>
 
-    <!-- 🔹 Menu de navegação principal -->
+    <!-- ✅ Menu de navegação principal -->
     <nav>
         <ul>
             <!-- Início / Dashboard -->
@@ -32,6 +36,11 @@
 
             <!-- Módulo Status de Projeto -->
             <li><a href="{{ url_for('web.listar_status') }}">📋 Status</a></li>
+
+            <!-- ✅ Módulo Usuários – visível apenas para administradores -->
+            {% if session.get('usuario_permissao') == 'admin' %}
+                <li><a href="{{ url_for('web.listar_usuarios') }}">🔐 Usuários</a></li>
+            {% endif %}
         </ul>
 
         <!-- 🔹 Informações do usuário logado -->
@@ -43,11 +52,22 @@
         {% endif %}
     </nav>
 
-    <!-- 🔹 Conteúdo dinâmico da página -->
+    <!-- ✅ Área de conteúdo dinâmico -->
     <main>
-        {% block content %}
-        {% endblock %}
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                {% for categoria, msg in mensagens %}
+                    <div class="alert {{ categoria }}">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block conteudo %}{% endblock %}
     </main>
 
+    <!-- ✅ Rodapé -->
+    <footer>
+        <p>&copy; {{ current_year or 2025 }} - Sistema de Gestão de Projetos</p>
+    </footer>
 </body>
 </html>
