@@ -1,8 +1,10 @@
 # Arquivo: app/routes/main_routes.py
-from flask import Blueprint
+from flask import Blueprint, render_template, session
+from .web_routes import web
 
-bp = Blueprint('main', __name__)
+# web = Blueprint('main', __name__)
 
-@bp.route('/inicio')
-def home():
-    return '🚀 Sistema de Gestão de Projetos Online!'
+@web.route('/')
+def index():
+    return render_template('index.html')
+

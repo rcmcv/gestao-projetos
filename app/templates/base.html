@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Gestão de Projetos{% endblock %}</title>
+</head>
+<body>
+
+    <!-- 🔹 Menu de navegação principal -->
+    <nav>
+        <ul>
+            <!-- Início / Dashboard -->
+            <li><a href="{{ url_for('web.pagina_inicial') }}">🏠 Início</a></li>
+
+            <!-- Módulo Projetos -->
+            <li><a href="{{ url_for('web.listar_projetos') }}">📁 Projetos</a></li>
+
+            <!-- Módulo Clientes -->
+            <li><a href="{{ url_for('web.listar_clientes') }}">👥 Clientes</a></li>
+
+            <!-- Módulo Fornecedores -->
+            <li><a href="{{ url_for('web.listar_fornecedores') }}">🏢 Fornecedores</a></li>
+
+            <!-- Módulo Materiais -->
+            <li><a href="{{ url_for('web.listar_materiais') }}">📦 Materiais</a></li>
+
+            <!-- Módulo Tipos -->
+            <li><a href="{{ url_for('web.listar_tipos') }}">🏷️ Tipos</a></li>
+
+            <!-- Módulo Unidades de Medida -->
+            <li><a href="{{ url_for('web.listar_unidades') }}">📏 Unidades</a></li>
+
+            <!-- Módulo Status de Projeto -->
+            <li><a href="{{ url_for('web.listar_status') }}">📋 Status</a></li>
+        </ul>
+
+        <!-- 🔹 Informações do usuário logado -->
+        {% if session.get('usuario_nome') %}
+            <p>👤 {{ session['usuario_nome'] }}</p>
+            <form action="{{ url_for('web.logout') }}" method="post">
+                <button type="submit">Sair</button>
+            </form>
+        {% endif %}
+    </nav>
+
+    <!-- 🔹 Conteúdo dinâmico da página -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

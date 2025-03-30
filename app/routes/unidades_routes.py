@@ -3,12 +3,13 @@ from flask import Blueprint, request
 from app.extensions import db
 from app.models.models import UnidadeMedida
 from app.utils.resposta import resposta_json
+from .web_routes import web
 
 # Criação do Blueprint para rotas de Unidade de Medida
-bp = Blueprint('unidades', __name__)
+# web = Blueprint('unidades', __name__)
 
 # ✅ Listar todas as unidades de medida
-@bp.route('/unidades-medida', methods=['GET'])
+@web.route('/unidades-medida', methods=['GET'])
 def listar_unidades():
     unidades = UnidadeMedida.query.all()
     return resposta_json([
@@ -16,7 +17,7 @@ def listar_unidades():
     ])
 
 # ✅ Adicionar nova unidade de medida
-@bp.route('/unidades-medida', methods=['POST'])
+@web.route('/unidades-medida', methods=['POST'])
 def adicionar_unidade():
     dados = request.json
     sigla = dados.get('sigla')
@@ -31,7 +32,7 @@ def adicionar_unidade():
     return resposta_json({'mensagem': 'Unidade de medida cadastrada com sucesso!'})
 
 # ✅ Editar unidade de medida
-@bp.route('/unidades-medida/<int:id>', methods=['PUT'])
+@web.route('/unidades-medida/<int:id>', methods=['PUT'])
 def editar_unidade(id):
     unidade = UnidadeMedida.query.get(id)
     if not unidade:
@@ -43,7 +44,7 @@ def editar_unidade(id):
     return resposta_json({'mensagem': 'Unidade de medida atualizada com sucesso.'})
 
 # ✅ Excluir unidade de medida
-@bp.route('/unidades-medida/<int:id>', methods=['DELETE'])
+@web.route('/unidades-medida/<int:id>', methods=['DELETE'])
 def excluir_unidade(id):
     unidade = UnidadeMedida.query.get(id)
     if not unidade:

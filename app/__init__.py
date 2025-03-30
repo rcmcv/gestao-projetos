@@ -4,50 +4,29 @@ from flask import Flask
 from app.extensions import db
 from app.utils.email_utils import mail
 
-# Rotas da interface web (HTML)
-from app.routes import (
-    web_routes,
-    auth_routes,
-    main_routes,
-    tipos_routes,
-    unidades_routes,
-    materiais_routes,
-    fornecedores_routes,
-    clientes_routes,
-    status_routes,
-    projetos_routes,
-    materiais_projeto_routes,
-    orcamentos_routes
-)
+# ✅ Importa todos os blueprints da interface web (rotas HTML)
+from app.routes import (web_routes)
 
-# Função que registra TODAS as rotas da API automaticamente
+# ✅ Função centralizada para registrar todas as rotas da API REST
 from app.api import registrar_rotas_api
 
+# 🔧 Função que cria e configura a aplicação Flask
 def create_app():
+    # Cria a aplicação com suporte a pasta 'instance/' para configs
     app = Flask(__name__, instance_relative_config=True)
 
-    # 🔧 Configurações da instância (pasta instance/config.py)
+    # 🔒 Carrega configurações da instância (como o banco e chave secreta)
     app.config.from_pyfile('config.py')
 
-    # 🔌 Inicializar extensões
+    # 🔌 Inicializa as extensões do sistema (DB e Mail)
     db.init_app(app)
     mail.init_app(app)
 
-    # 🌐 Registrar rotas da interface web (HTML)
-    app.register_blueprint(web_routes.bp)
-    app.register_blueprint(auth_routes.bp)
-    app.register_blueprint(main_routes.bp)
-    app.register_blueprint(tipos_routes.bp)
-    app.register_blueprint(unidades_routes.bp)
-    app.register_blueprint(materiais_routes.bp)
-    app.register_blueprint(fornecedores_routes.bp)
-    app.register_blueprint(clientes_routes.bp)
-    app.register_blueprint(status_routes.bp)
-    app.register_blueprint(projetos_routes.bp)
-    app.register_blueprint(materiais_projeto_routes.bp)
-    app.register_blueprint(orcamentos_routes.bp)
+    # 🌐 Registra todos os blueprints da interface web
+    app.register_blueprint(web_routes)
 
-    # 📡 Registrar rotas da API
+    # 📡 Registra rotas da API REST com prefixo /api
     registrar_rotas_api(app)
 
+    # Retorna a instância da aplicação já configurada
     return app

@@ -4,12 +4,13 @@ from flask import Blueprint, request
 from app.extensions import db
 from app.models.models import Fornecedor, TipoMaterial
 from app.utils.resposta import resposta_json
+from .web_routes import web
 
 # Criação do Blueprint para rotas do módulo "fornecedores"
-bp = Blueprint('fornecedores', __name__)
+# web = Blueprint('fornecedores', __name__)
 
 # ✅ Rota para listar todos os fornecedores
-@bp.route('/fornecedores', methods=['GET'])
+@web.route('/fornecedores', methods=['GET'])
 def listar_fornecedores():
     fornecedores = Fornecedor.query.all()  # Consulta todos os fornecedores no banco
     return resposta_json([
@@ -25,7 +26,7 @@ def listar_fornecedores():
     ])
 
 # ✅ Rota para adicionar novo fornecedor
-@bp.route('/fornecedores', methods=['POST'])
+@web.route('/fornecedores', methods=['POST'])
 def adicionar_fornecedor():
     dados = request.json  # Recebe os dados em JSON enviados na requisição
 
@@ -49,7 +50,7 @@ def adicionar_fornecedor():
     return resposta_json({'mensagem': 'Fornecedor cadastrado com sucesso!'})
 
 # ✅ Rota para editar fornecedor existente
-@bp.route('/fornecedores/<int:id>', methods=['PUT'])
+@web.route('/fornecedores/<int:id>', methods=['PUT'])
 def editar_fornecedor(id):
     fornecedor = Fornecedor.query.get(id)  # Busca fornecedor pelo ID
     if not fornecedor:
@@ -68,7 +69,7 @@ def editar_fornecedor(id):
     return resposta_json({'mensagem': 'Fornecedor atualizado com sucesso.'})
 
 # ✅ Rota para excluir fornecedor
-@bp.route('/fornecedores/<int:id>', methods=['DELETE'])
+@web.route('/fornecedores/<int:id>', methods=['DELETE'])
 def excluir_fornecedor(id):
     fornecedor = Fornecedor.query.get(id)  # Busca fornecedor pelo ID
     if not fornecedor:

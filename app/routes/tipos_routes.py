@@ -3,12 +3,13 @@ from flask import Blueprint, request
 from app.models.models import TipoMaterial
 from app.utils.resposta import resposta_json
 from app.extensions import db
+from .web_routes import web
 
 # Criação do Blueprint para rotas relacionadas a "tipos de material"
-bp = Blueprint('tipos', __name__)
+# web = Blueprint('tipos', __name__)
 
 # ✅ Rota para listar todos os tipos de material
-@bp.route('/tipos-material', methods=['GET'])
+@web.route('/tipos-material', methods=['GET'])
 def listar_tipos():
     tipos = TipoMaterial.query.all()  # Busca todos os registros no banco
     return resposta_json([
@@ -16,7 +17,7 @@ def listar_tipos():
     ])
 
 # ✅ Rota para adicionar um novo tipo de material
-@bp.route('/tipos-material', methods=['POST'])
+@web.route('/tipos-material', methods=['POST'])
 def adicionar_tipo():
     dados = request.json  # Recebe os dados JSON da requisição
     nome = dados.get('nome')  # Pega o campo 'nome'
@@ -30,7 +31,7 @@ def adicionar_tipo():
     return resposta_json({'mensagem': 'Tipo de material cadastrado com sucesso!'})
 
 # ✅ Rota para editar (atualizar) um tipo de material existente
-@bp.route('/tipos-material/<int:id>', methods=['PUT'])
+@web.route('/tipos-material/<int:id>', methods=['PUT'])
 def editar_tipo(id):
     tipo = TipoMaterial.query.get(id)  # Busca o tipo pelo ID
     if not tipo:
@@ -41,7 +42,7 @@ def editar_tipo(id):
     return resposta_json({'mensagem': 'Tipo de material atualizado com sucesso.'})
 
 # ✅ Rota para excluir um tipo de material
-@bp.route('/tipos-material/<int:id>', methods=['DELETE'])
+@web.route('/tipos-material/<int:id>', methods=['DELETE'])
 def excluir_tipo(id):
     tipo = TipoMaterial.query.get(id)  # Busca pelo ID
     if not tipo:

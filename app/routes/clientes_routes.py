@@ -4,12 +4,13 @@ from flask import Blueprint, request
 from app.extensions import db
 from app.models.models import Cliente
 from app.utils.resposta import resposta_json
+from .web_routes import web
 
 # Blueprint para rotas de clientes
-bp = Blueprint('clientes', __name__)
+# web = Blueprint('clientes', __name__)
 
 # ✅ Listar clientes
-@bp.route('/clientes', methods=['GET'])
+@web.route('/clientes', methods=['GET'])
 def listar_clientes():
     clientes = Cliente.query.all()
     return resposta_json([
@@ -24,7 +25,7 @@ def listar_clientes():
     ])
 
 # ✅ Adicionar cliente
-@bp.route('/clientes', methods=['POST'])
+@web.route('/clientes', methods=['POST'])
 def adicionar_cliente():
     dados = request.json
 
@@ -45,7 +46,7 @@ def adicionar_cliente():
     return resposta_json({'mensagem': 'Cliente cadastrado com sucesso!'})
 
 # ✅ Editar cliente
-@bp.route('/clientes/<int:id>', methods=['PUT'])
+@web.route('/clientes/<int:id>', methods=['PUT'])
 def editar_cliente(id):
     cliente = Cliente.query.get(id)
     if not cliente:
@@ -62,7 +63,7 @@ def editar_cliente(id):
     return resposta_json({'mensagem': 'Cliente atualizado com sucesso.'})
 
 # ✅ Excluir cliente
-@bp.route('/clientes/<int:id>', methods=['DELETE'])
+@web.route('/clientes/<int:id>', methods=['DELETE'])
 def excluir_cliente(id):
     cliente = Cliente.query.get(id)
     if not cliente:

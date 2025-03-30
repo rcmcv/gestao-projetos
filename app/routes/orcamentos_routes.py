@@ -8,13 +8,14 @@ import os
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from app.models.models import MaterialProjeto, Material, Fornecedor
+from .web_routes import web
 
-bp = Blueprint('orcamentos', __name__)
+# web = Blueprint('orcamentos', __name__)
 
 UPLOAD_DIR = 'app/uploads/orcamentos'
 
 # ✅ Cadastrar orçamento sem upload de PDF
-@bp.route('/orcamentos', methods=['POST'])
+@web.route('/orcamentos', methods=['POST'])
 def cadastrar_orcamento():
     try:
         dados = request.json  # <- usa JSON ao invés de request.form
@@ -36,7 +37,7 @@ def cadastrar_orcamento():
 
 
 # ✅ Listar orçamentos de um projeto
-@bp.route('/projetos/<int:projeto_id>/orcamentos', methods=['GET'])
+@web.route('/projetos/<int:projeto_id>/orcamentos', methods=['GET'])
 def listar_orcamentos_por_projeto(projeto_id):
     orcamentos = (
         db.session.query(Orcamento)
@@ -58,7 +59,7 @@ def listar_orcamentos_por_projeto(projeto_id):
 
 
 # ✅ Atualizar um orçamento
-@bp.route('/orcamentos/<int:id>', methods=['PUT'])
+@web.route('/orcamentos/<int:id>', methods=['PUT'])
 def editar_orcamento(id):
     orcamento = Orcamento.query.get(id)
     if not orcamento:
@@ -77,7 +78,7 @@ def editar_orcamento(id):
 
 
 # ✅ Excluir um orçamento
-@bp.route('/orcamentos/<int:id>', methods=['DELETE'])
+@web.route('/orcamentos/<int:id>', methods=['DELETE'])
 def excluir_orcamento(id):
     orcamento = Orcamento.query.get(id)
     if not orcamento:
@@ -89,7 +90,7 @@ def excluir_orcamento(id):
 
 
 # ✅ Relatório de balizamento por projeto
-@bp.route('/projetos/<int:projeto_id>/relatorio-balizamento', methods=['GET'])
+@web.route('/projetos/<int:projeto_id>/relatorio-balizamento', methods=['GET'])
 def relatorio_balizamento(projeto_id):
     relatorio = []
 

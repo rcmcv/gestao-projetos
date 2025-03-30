@@ -4,11 +4,12 @@ from app.extensions import db
 from app.models.models import Projeto
 from app.utils.resposta import resposta_json
 from datetime import datetime
+from .web_routes import web
 
-bp = Blueprint('projetos', __name__)
+# web = Blueprint('projetos', __name__)
 
 # ✅ Listar todos os projetos
-@bp.route('/projetos', methods=['GET'])
+@web.route('/projetos', methods=['GET'])
 def listar_projetos():
     projetos = Projeto.query.all()
     return resposta_json([
@@ -26,7 +27,7 @@ def listar_projetos():
     ])
 
 # ✅ Cadastrar novo projeto
-@bp.route('/projetos', methods=['POST'])
+@web.route('/projetos', methods=['POST'])
 def adicionar_projeto():
     dados = request.json
     try:
@@ -47,7 +48,7 @@ def adicionar_projeto():
         return resposta_json({'erro': str(e)}, 400)
 
 # ✅ Atualizar projeto (inclui aprovação e datas de execução)
-@bp.route('/projetos/<int:id>', methods=['PUT'])
+@web.route('/projetos/<int:id>', methods=['PUT'])
 def editar_projeto(id):
     projeto = Projeto.query.get(id)
     if not projeto:
@@ -75,7 +76,7 @@ def editar_projeto(id):
     return resposta_json({'mensagem': 'Projeto atualizado com sucesso.'})
 
 # ✅ Excluir projeto
-@bp.route('/projetos/<int:id>', methods=['DELETE'])
+@web.route('/projetos/<int:id>', methods=['DELETE'])
 def excluir_projeto(id):
     projeto = Projeto.query.get(id)
     if not projeto:

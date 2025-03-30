@@ -1,148 +1,77 @@
 # Arquivo: app/routes/auth_routes.py
-from flask import Blueprint, request, jsonify
-from flask import session
-from werkzeug.security import check_password_hash
-from werkzeug.security import generate_password_hash
-from app import db
+# Rotas da interface web relacionadas à autenticação: login, logout e recuperação de senha
+
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from app.models.models import Usuario
+from app import db
+from werkzeug.security import check_password_hash, generate_password_hash
+from app.utils.email_utils import enviar_nova_senha
 from app.utils.resposta import resposta_json
+from .web_routes import web  # Usamos o blueprint "web" unificado para todas as rotas HTML
 
-bp = Blueprint('auth', __name__)
+# ✅ Tela de login – exibe o formulário e processa autenticação
+@web.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        senha = request.form.get('senha')
 
-# ✅ Listar todos os usuários
-@bp.route('/usuarios')
-def listar_usuarios():
-    usuarios = Usuario.query.all()
-    lista = []
-    for u in usuarios:
-        lista.append({
-            'id': u.id,
-            'nome': u.nome,
-            'email': u.email,
-            'senha': u.senha,
-            'permissao': u.permissao
-        })
-    return jsonify(lista)
+        usuario = Usuario.query.filter_by(email=email).first()
 
+        if usuario and check_password_hash(usuario.senha, senha):
+            # Login OK → salva dados do usuário na sessão
+            session['usuario_id'] = usuario.id
+            session['usuario_nome'] = usuario.nome
+            session['usuario_permissao'] = usuario.permissao
 
-# ✅ Adicionar novo usuário
-@bp.route('/usuarios/novo', methods=['POST'])
-def adicionar_usuario():
-    dados = request.json
-    senha_criptografada = generate_password_hash(dados['senha'])
+            flash(f'Bem-vindo, {usuario.nome}!', 'success')
+            return redirect(url_for('web.pagina_inicial'))  # Redireciona após login
+        else:
+            erro = 'Email ou senha inválidos.'
+            return render_template('login.html', erro=erro)
 
-    novo = Usuario(
-        nome=dados['nome'],
-        email=dados['email'],
-        senha=senha_criptografada,  # Salva a senha criptografada em hash!
-        permissao=dados['permissao']
-    )
-    db.session.add(novo)
-    db.session.commit()
-    return resposta_json({'mensagem': 'Usuário cadastrado com sucesso!'})
+    # Requisição GET → renderiza o formulário de login
+    return render_template('login.html')
 
-
-# ✅ Login de usuários
-@bp.route('/login', methods=['POST'])
-def realizar_login():
-    dados = request.json
-    email = dados.get('email')
-    senha = dados.get('senha')
-
-    usuario = Usuario.query.filter_by(email=email).first()
-
-    if usuario and check_password_hash(usuario.senha, senha):
-        session['usuario_id'] = usuario.id
-        session['usuario_nome'] = usuario.nome
-        session['usuario_permissao'] = usuario.permissao
-        return resposta_json({'mensagem': f'Bem-vindo(a), {usuario.nome}!', 'permissao': usuario.permissao})
-    else:
-        return resposta_json({'erro': 'Email ou senha inválidos'}), 401
-
-
-#✅ Logout de usuários
-@bp.route('/api/logout')
+# ✅ Logout – limpa a sessão do usuário e redireciona para login
+@web.route('/logout', methods=['POST'])
 def logout():
     session.clear()
-    return resposta_json({'mensagem': 'Logout realizado com sucesso.'})
+    flash('Logout realizado com sucesso.', 'info')
+    return redirect(url_for('web.login'))
 
+# ✅ Recuperar senha – formulário para solicitar nova senha
+@web.route('/recuperar-senha', methods=['GET', 'POST'], endpoint='recuperar_senha')
+def recuperar_senha_form():
+    if request.method == 'POST':
+        email = request.form.get('email')
 
-# ✅ Área restrita
-@bp.route('/admin-area')
-def admin_area():
+        usuario = Usuario.query.filter_by(email=email).first()
+
+        if not usuario:
+            erro = 'E-mail não encontrado.'
+            return render_template('recuperar_senha.html', erro=erro)
+
+        # Gera nova senha aleatória e envia por e-mail
+        nova_senha = enviar_nova_senha(email)
+        usuario.senha = generate_password_hash(nova_senha)
+        db.session.commit()
+
+        flash('Nova senha enviada para o e-mail informado.', 'success')
+        return redirect(url_for('web.login'))
+
+    # Requisição GET → renderiza o formulário de recuperação
+    return render_template('recuperar_senha.html')
+
+# ✅ Redireciona rota raiz para a tela de login
+@web.route('/')
+def root():
+    return redirect(url_for('web.login'))
+
+# ✅ Redireciona rota para a tela inicial do sistema
+@web.route('/index')
+def pagina_inicial():
     if 'usuario_id' not in session:
-        return resposta_json({'erro': 'Acesso não autorizado. Faça login primeiro.'}), 401
+        return redirect(url_for('web.login'))
 
-    if session.get('usuario_permissao') != 'admin':
-        return resposta_json({'erro': 'Acesso restrito para administradores.'}), 403
-
-    return resposta_json({'mensagem': f'Acesso liberado para administrador {session.get("usuario_nome")}'})
-
-
-# 🔁 Atualizar um usuário existente
-@bp.route('/usuarios/<int:id>', methods=['PUT'])
-def atualizar_usuario(id):
-    usuario = Usuario.query.get(id)
-    if not usuario:
-        return resposta_json({'erro': 'Usuário não encontrado.'}, 404)
-
-    dados = request.json
-    usuario.nome = dados.get('nome', usuario.nome)
-    usuario.email = dados.get('email', usuario.email)
-    usuario.permissao = dados.get('permissao', usuario.permissao)
-
-    if 'senha' in dados:
-        from werkzeug.security import generate_password_hash
-        usuario.senha = generate_password_hash(dados['senha'])
-
-    db.session.commit()
-    return resposta_json({'mensagem': 'Usuário atualizado com sucesso.'})
-
-
-# ❌ Excluir um usuário
-@bp.route('/usuarios/<int:id>', methods=['DELETE'])
-def excluir_usuario(id):
-    usuario = Usuario.query.get(id)
-    if not usuario:
-        return resposta_json({'erro': 'Usuário não encontrado.'}, 404)
-
-    db.session.delete(usuario)
-    db.session.commit()
-    return resposta_json({'mensagem': f'Usuário {usuario.nome} excluído com sucesso.'})
-
-
-# 🔍 Buscar usuário individual
-@bp.route('/usuarios/<int:id>')
-def buscar_usuario(id):
-    usuario = Usuario.query.get(id)
-    if not usuario:
-        return resposta_json({'erro': 'Usuário não encontrado.'}, 404)
-
-    return resposta_json({
-        'id': usuario.id,
-        'nome': usuario.nome,
-        'email': usuario.email,
-        'permissao': usuario.permissao
-    })
-
-
-# 🔁 Recuperar senha de usuário existente
-@bp.route('/api/recuperar-senha', methods=['POST'])
-def recuperar_senha():
-    dados = request.json
-    email = dados.get('email')
-    nova_senha = dados.get('nova_senha')
-
-    if not email or not nova_senha:
-        return resposta_json({'erro': 'Informe o e-mail e a nova senha.'}, 400)
-
-    usuario = Usuario.query.filter_by(email=email).first()
-
-    if not usuario:
-        return resposta_json({'erro': 'E-mail não encontrado.'}, 404)
-
-    from werkzeug.security import generate_password_hash
-    usuario.senha = generate_password_hash(nova_senha)
-    db.session.commit()
-
-    return resposta_json({'mensagem': 'Senha redefinida com sucesso!'})
+    return render_template('index.html')

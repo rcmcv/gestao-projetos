@@ -3,11 +3,12 @@ from flask import Blueprint, request
 from app.extensions import db
 from app.models.models import MaterialProjeto, Projeto, Material
 from app.utils.resposta import resposta_json
+from .web_routes import web
 
-bp = Blueprint('materiais_projeto', __name__)
+# web = Blueprint('materiais_projeto', __name__)
 
 # ✅ Listar materiais de um projeto específico
-@bp.route('/projetos/<int:projeto_id>/materiais', methods=['GET'])
+@web.route('/projetos/<int:projeto_id>/materiais', methods=['GET'])
 def listar_materiais_do_projeto(projeto_id):
     materiais = MaterialProjeto.query.filter_by(projeto_id=projeto_id).all()
     return resposta_json([
@@ -21,7 +22,7 @@ def listar_materiais_do_projeto(projeto_id):
     ])
 
 # ✅ Adicionar material a um projeto
-@bp.route('/projetos/<int:projeto_id>/materiais', methods=['POST'])
+@web.route('/projetos/<int:projeto_id>/materiais', methods=['POST'])
 def adicionar_material_ao_projeto(projeto_id):
     dados = request.json
     material_id = dados.get('material_id')
@@ -48,7 +49,7 @@ def adicionar_material_ao_projeto(projeto_id):
     return resposta_json({'mensagem': 'Material adicionado ao projeto com sucesso.'})
 
 # ✅ Editar quantidade de material em projeto
-@bp.route('/materiais-projeto/<int:id>', methods=['PUT'])
+@web.route('/materiais-projeto/<int:id>', methods=['PUT'])
 def editar_material_projeto(id):
     item = MaterialProjeto.query.get(id)
     if not item:
@@ -59,7 +60,7 @@ def editar_material_projeto(id):
     return resposta_json({'mensagem': 'Quantidade atualizada com sucesso.'})
 
 # ✅ Excluir material do projeto
-@bp.route('/materiais-projeto/<int:id>', methods=['DELETE'])
+@web.route('/materiais-projeto/<int:id>', methods=['DELETE'])
 def excluir_material_projeto(id):
     item = MaterialProjeto.query.get(id)
     if not item:

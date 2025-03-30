@@ -3,11 +3,12 @@ from flask import Blueprint, request
 from app.extensions import db
 from app.models.models import Material, TipoMaterial, UnidadeMedida
 from app.utils.resposta import resposta_json
+from .web_routes import web
 
-bp = Blueprint('materiais', __name__)
+# web = Blueprint('materiais', __name__)
 
 # ✅ Listar materiais com nomes de tipo e unidade
-@bp.route('/materiais', methods=['GET'])
+@web.route('/materiais', methods=['GET'])
 def listar_materiais():
     materiais = Material.query.all()
     return resposta_json([
@@ -20,7 +21,7 @@ def listar_materiais():
     ])
 
 # ✅ Adicionar novo material
-@bp.route('/materiais', methods=['POST'])
+@web.route('/materiais', methods=['POST'])
 def adicionar_material():
     dados = request.json
     nome = dados.get('nome')
@@ -36,7 +37,7 @@ def adicionar_material():
     return resposta_json({'mensagem': 'Material cadastrado com sucesso!'})
 
 # ✅ Editar material
-@bp.route('/materiais/<int:id>', methods=['PUT'])
+@web.route('/materiais/<int:id>', methods=['PUT'])
 def editar_material(id):
     material = Material.query.get(id)
     if not material:
@@ -51,7 +52,7 @@ def editar_material(id):
     return resposta_json({'mensagem': 'Material atualizado com sucesso.'})
 
 # ✅ Excluir material
-@bp.route('/materiais/<int:id>', methods=['DELETE'])
+@web.route('/materiais/<int:id>', methods=['DELETE'])
 def excluir_material(id):
     material = Material.query.get(id)
     if not material:
@@ -62,7 +63,7 @@ def excluir_material(id):
     return resposta_json({'mensagem': f'Material {material.nome} excluído com sucesso.'})
 
 # ✅ Rota para buscar materiais por tipo de material
-@bp.route('/materiais/buscar', methods=['GET'])
+@web.route('/materiais/buscar', methods=['GET'])
 def buscar_materiais_por_tipo_e_nome():
     tipo_id = request.args.get('tipo_id')
     busca = request.args.get('q', '')  # texto digitado pelo usuário

@@ -4,12 +4,13 @@ from flask import Blueprint, request
 from app.extensions import db
 from app.models.models import Status
 from app.utils.resposta import resposta_json
+from .web_routes import web
 
 # Blueprint para rotas de status
-bp = Blueprint('status', __name__)
+# web = Blueprint('status', __name__)
 
 # ✅ Listar todos os status
-@bp.route('/status', methods=['GET'])
+@web.route('/status', methods=['GET'])
 def listar_status():
     status = Status.query.all()
     return resposta_json([
@@ -17,7 +18,7 @@ def listar_status():
     ])
 
 # ✅ Adicionar novo status
-@bp.route('/status', methods=['POST'])
+@web.route('/status', methods=['POST'])
 def adicionar_status():
     dados = request.json
     nome = dados.get('nome')
@@ -30,7 +31,7 @@ def adicionar_status():
     return resposta_json({'mensagem': 'Status cadastrado com sucesso!'})
 
 # ✅ Editar status
-@bp.route('/status/<int:id>', methods=['PUT'])
+@web.route('/status/<int:id>', methods=['PUT'])
 def editar_status(id):
     status = Status.query.get(id)
     if not status:
@@ -43,7 +44,7 @@ def editar_status(id):
     return resposta_json({'mensagem': 'Status atualizado com sucesso.'})
 
 # ✅ Excluir status
-@bp.route('/status/<int:id>', methods=['DELETE'])
+@web.route('/status/<int:id>', methods=['DELETE'])
 def excluir_status(id):
     status = Status.query.get(id)
     if not status:
