@@ -1,11 +1,12 @@
 # Arquivo: app/utils/email_utils.py
+from flask_mail import Message, Mail                # Classe para envio de e-mails
+from app.extensions import mail, db                 # Instâncias do Flask-Mail e SQLAlchemy
+from app.models.models import Usuario               # Modelo de usuário
+from flask import current_app                       # Necessário para acessar a app atual
+from werkzeug.security import generate_password_hash
+import secrets                                      # Para gerar senhas aleatórias seguras
 import string
 import random
-from flask_mail import Mail, Message
-from flask import current_app
-from app.models.models import Usuario
-from app.extensions import db
-from werkzeug.security import generate_password_hash
 
 mail = Mail()  # Instância do Flask-Mail
 
