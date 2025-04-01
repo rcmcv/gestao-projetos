@@ -1,41 +1,29 @@
 <!-- # Arquivo: app/templates/recuperar_senha.html -->
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Recuperar Senha</title>
-</head>
-<body>
+{# Arquivo: templates/recuperar_senha.html #}
+{% extends 'base_public.html' %}
 
-    <!-- Título da página -->
-    <h2>Recuperar Senha</h2>
+{% block conteudo %}
+    <!-- 🔐 Título da página -->
+    <h2>📧 Recuperar Senha</h2>
 
-    <!-- ✅ Bloco para exibir mensagens flash (sucesso ou erro) -->
-    {% with mensagens = get_flashed_messages(with_categories=true) %}
-        {% if mensagens %}
-            <ul>
-                {% for categoria, mensagem in mensagens %}
-                    <li><strong>{{ categoria|capitalize }}:</strong> {{ mensagem }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+    <!-- 🔸 Formulário para o usuário informar o e-mail -->
+    <form method="POST" action="{{ url_for('web.recuperar_senha') }}">
+        <div style="margin-bottom: 10px;">
+            <label for="email">Informe seu e-mail cadastrado:</label><br>
+            <input type="email" name="email" id="email" required>
+        </div>
 
-    <!-- Formulário de recuperação de senha: envia email para a rota via POST -->
-    <form method="post">
-
-        <!-- Campo para o usuário digitar o email -->
-        <label>Digite seu e-mail:</label><br>
-        <input type="email" name="email" required><br><br>
-
-        <!-- Botão para enviar o formulário e acionar envio da nova senha -->
+        <!-- 🔘 Botão para envio do e-mail -->
         <button type="submit">Enviar nova senha</button>
     </form>
 
-    <!-- Link para voltar à tela de login -->
-    <p>
-        <a href="{{ url_for('web.login') }}">Voltar ao login</a>
+    <!-- 🔙 Link para retornar à tela de login -->
+    <p style="margin-top: 15px;">
+        <a href="{{ url_for('web.login') }}">← Voltar para o login</a>
     </p>
 
-</body>
-</html>
+    <!-- ⚠️ Caso ocorra algum erro -->
+    {% if erro %}
+        <p style="color: red;"><strong>{{ erro }}</strong></p>
+    {% endif %}
+{% endblock %}

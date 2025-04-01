@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-</head>
-<body>
-    <h2>Bem-vindo, {{ nome }}!</h2>
-    <p>Aqui será o painel principal do sistema.</p>
-    <a href="{{ url_for('web.logout') }}">Sair</a>
-</body>
-</html>
+<!-- Arquivo: app/templates/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block conteudo %}
+    <h2>📊 Dashboard</h2>
+    <p>Bem-vindo ao painel de controle do sistema.</p>
+
+    <!-- Aqui você poderá futuramente incluir gráficos, indicadores e métricas do sistema -->
+    <p>Em breve: estatísticas, progresso de projetos, orçamentos pendentes e mais!</p>
+{% endblock %}
+

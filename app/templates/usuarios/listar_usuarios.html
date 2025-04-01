@@ -1,48 +1,51 @@
+<!-- Arquivo: app/templates/usuarios/listar_usuarios.html -->
+{# Arquivo: templates/usuarios/listar_usuarios.html #}
 {% extends 'base.html' %}
 
-{% block titulo %}Usuários{% endblock %}
-
 {% block conteudo %}
-<div class="container mt-4">
-    <h2>Usuários</h2>
+    <!-- 🔹 Título da página -->
+    <h2>📂 Usuários</h2>
 
-    <!-- Botão para adicionar novo usuário -->
-    <a href="{{ url_for('web.novo_usuario') }}" class="btn btn-primary mb-3">➕ Novo Usuário</a>
+    <!-- ➕ Botão para adicionar novo usuário -->
+    <p>
+        <a href="{{ url_for('web.novo_usuario') }}">➕ Novo Usuário</a>
+    </p>
 
-    <!-- Tabela de usuários -->
-    <table class="table table-bordered table-hover">
-        <thead class="table-light">
+    <!-- 📋 Tabela de usuários -->
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
             <tr>
                 <th>ID</th>
                 <th>Nome</th>
-                <th>Email</th>
+                <th>E-mail</th>
                 <th>Permissão</th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
             {% for usuario in usuarios %}
-            <tr>
-                <td>{{ usuario.id }}</td>
-                <td>{{ usuario.nome }}</td>
-                <td>{{ usuario.email }}</td>
-                <td>{{ usuario.permissao }}</td>
-                <td>
-                    <!-- Botão para editar -->
-                    <a href="{{ url_for('web.editar_usuario', id=usuario.id) }}" class="btn btn-sm btn-warning">✏️ Editar</a>
+                <tr>
+                    <td>{{ usuario.id }}</td>
+                    <td>{{ usuario.nome }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.permissao }}</td>
+                    <td>
+                        <!-- ✏️ Editar -->
+                        <a href="{{ url_for('web.editar_usuario', id=usuario.id) }}">✏️ Editar</a>
 
-                    <!-- Botão para excluir (com confirmação) -->
-                    <form action="{{ url_for('web.excluir_usuario', id=usuario.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
-                        <button type="submit" class="btn btn-sm btn-danger">🗑️ Excluir</button>
-                    </form>
-                </td>
-            </tr>
+                        <!-- 🗑️ Excluir (exceto o logado) -->
+                        {% if session.get('usuario_id') != usuario.id %}
+                            <form action="{{ url_for('web.excluir_usuario', id=usuario.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">🗑️ Excluir</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
             {% else %}
-            <tr>
-                <td colspan="5" class="text-center">Nenhum usuário cadastrado.</td>
-            </tr>
+                <tr>
+                    <td colspan="5">Nenhum usuário cadastrado.</td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
-</div>
 {% endblock %}

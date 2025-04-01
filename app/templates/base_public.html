@@ -1,0 +1,39 @@
+<!-- Arquivo: app/templates/base_public.html -->
+{# Arquivo: templates/base_public.html #}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Projetos - Acesso</title>
+</head>
+<body>
+    <header style="text-align: center; padding: 10px;">
+        <h1>🔐 Sistema de Gestão de Projetos</h1>
+    </header>
+
+    <hr>
+
+    <main style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+        <section style="width: 100%; max-width: 400px;">
+            {% with mensagens = get_flashed_messages(with_categories=true) %}
+                {% if mensagens %}
+                    <ul>
+                        {% for categoria, mensagem in mensagens %}
+                            <li><strong>{{ mensagem }}</strong></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
+            {% block conteudo %}{% endblock %}
+        </section>
+    </main>
+
+    <hr>
+
+    <!-- 🔹 Rodapé do sistema -->
+    <footer style="text-align: center; padding: 10px;">
+        <p>© {{ current_year }} - Sistema de Gestão de Projetos</p>
+    </footer>
+</body>
+</html>

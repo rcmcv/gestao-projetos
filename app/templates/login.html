@@ -1,39 +1,29 @@
 <!-- # Arquivo: app/templates/login.html -->
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Login - Gestão de Projetos</title>
-</head>
-<body>
+{# Arquivo: templates/login.html #}
+{% extends 'base_public.html' %}
 
-    <!-- Título principal da página -->
-    <h2>Login</h2>
+{% block conteudo %}
+    <h2>🔐 Login</h2>
 
-    <!-- Exibe uma mensagem de erro, caso exista (ex: credenciais inválidas) -->
-    {% if erro %}
-        <p style="color: red;">{{ erro }}</p>
-    {% endif %}
+    <form method="POST" action="{{ url_for('web.login') }}">
+        <div style="margin-bottom: 10px;">
+            <label for="email">E-mail:</label><br>
+            <input type="email" name="email" id="email" required>
+        </div>
 
-    <!-- Formulário de login: envia email e senha para a rota '/' via método POST -->
-    <form action="{{ url_for('web.login') }}" method="post">
-        
-        <!-- Campo de email -->
-        <label>Email:</label><br>
-        <input type="text" name="email"><br><br>
+        <div style="margin-bottom: 10px;">
+            <label for="senha">Senha:</label><br>
+            <input type="password" name="senha" id="senha" required>
+        </div>
 
-        <!-- Campo de senha -->
-        <label>Senha:</label><br>
-        <input type="password" name="senha"><br><br>
-
-        <!-- Botão para enviar o formulário e tentar o login -->
         <button type="submit">Entrar</button>
     </form>
 
-    <!-- Link para a tela de recuperação de senha -->
-    <p>
-        <a href="{{ url_for('web.recuperar_senha') }}">Esqueci minha senha</a>
+    <p style="margin-top: 10px;">
+        <a href="{{ url_for('web.recuperar_senha') }}">Esqueceu sua senha?</a>
     </p>
 
-</body>
-</html>
+    {% if erro %}
+        <p style="color: red;"><strong>{{ erro }}</strong></p>
+    {% endif %}
+{% endblock %}
