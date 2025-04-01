@@ -1,0 +1,43 @@
+<!-- Arquivo: app/templates/unidades/listar_unidades.html -->
+{% extends 'base.html' %}
+
+{% block conteudo %}
+    <h2>Unidades de Medida</h2>
+
+    <!-- Botão para adicionar nova unidade -->
+    <p>
+        <a href="{{ url_for('web.nova_unidade') }}">➕ Nova Unidade</a>
+    </p>
+
+    <!-- Verifica se há unidades cadastradas -->
+    {% if unidades %}
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descricao</th>
+                    <th>Sigla</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for unidade in unidades %}
+                    <tr>
+                        <td>{{ unidade.id }}</td>
+                        <td>{{ unidade.descricao }}</td>
+                        <td>{{ unidade.sigla }}</td>
+                        <td>
+                            <a href="{{ url_for('web.editar_unidade', unidade_id=unidade.id) }}">✏️ Editar</a>
+                            |
+                            <form action="{{ url_for('web.excluir_unidade', unidade_id=unidade.id) }}" method="POST" style="display: inline;">
+                                <button type="submit" onclick="return confirm('Tem certeza que deseja excluir esta unidade?');">🗑️ Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nenhuma unidade cadastrada até o momento.</p>
+    {% endif %}
+{% endblock %}

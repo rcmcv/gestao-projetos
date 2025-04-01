@@ -1,55 +1,79 @@
 # Arquivo: app/routes/unidades_routes.py
-from flask import Blueprint, request
+# Rotas da interface web relacionadas à unidade de medida: cadastrar, listar, editar e excluir
+
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.extensions import db
 from app.models.models import UnidadeMedida
-from app.utils.resposta import resposta_json
 from .web_routes import web
 
-# Criação do Blueprint para rotas de Unidade de Medida
-# web = Blueprint('unidades', __name__)
 
-# ✅ Listar todas as unidades de medida
-@web.route('/unidades-medida', methods=['GET'])
+# ✅ Rota: Listar todas as unidades de medida
+@web.route('/unidades')
 def listar_unidades():
-    unidades = UnidadeMedida.query.all()
-    return resposta_json([
-        {'id': u.id, 'sigla': u.sigla, 'descricao': u.descricao} for u in unidades
-    ])
+    unidades = UnidadeMedida.query.order_by(UnidadeMedida.id).all()
+    return render_template('unidades/listar_unidades.html', unidades=unidades)
 
-# ✅ Adicionar nova unidade de medida
-@web.route('/unidades-medida', methods=['POST'])
-def adicionar_unidade():
-    dados = request.json
-    sigla = dados.get('sigla')
-    descricao = dados.get('descricao')
 
-    if not sigla or not descricao:
-        return resposta_json({'erro': 'Informe a sigla e a descrição.'}, 400)
+# ✅ Rota: Cadastrar nova unidade
+@web.route('/unidades/novo', methods=['GET', 'POST'])
+def nova_unidade():
+    if request.method == 'POST':
+        nome = request.form.get('descricao')
+        sigla = request.form.get('sigla')
 
-    unidade = UnidadeMedida(sigla=sigla, descricao=descricao)
-    db.session.add(unidade)
-    db.session.commit()
-    return resposta_json({'mensagem': 'Unidade de medida cadastrada com sucesso!'})
+        print("📨 Dados recebidos (nova unidade):", request.form)
 
-# ✅ Editar unidade de medida
-@web.route('/unidades-medida/<int:id>', methods=['PUT'])
-def editar_unidade(id):
-    unidade = UnidadeMedida.query.get(id)
-    if not unidade:
-        return resposta_json({'erro': 'Unidade de medida não encontrada.'}, 404)
+        # Validação simples
+        if not nome or not sigla:
+            flash("Preencha todos os campos obrigatórios.", "error")
+            return render_template('unidades/form_unidade.html')
 
-    unidade.sigla = request.json.get('sigla', unidade.sigla)
-    unidade.descricao = request.json.get('descricao', unidade.descricao)
-    db.session.commit()
-    return resposta_json({'mensagem': 'Unidade de medida atualizada com sucesso.'})
+        # Cria nova unidade e salva no banco
+        nova = UnidadeMedida(descricao=nome.strip(), sigla=sigla.strip())
+        db.session.add(nova)
+        db.session.commit()
 
-# ✅ Excluir unidade de medida
-@web.route('/unidades-medida/<int:id>', methods=['DELETE'])
-def excluir_unidade(id):
-    unidade = UnidadeMedida.query.get(id)
-    if not unidade:
-        return resposta_json({'erro': 'Unidade de medida não encontrada.'}, 404)
+        flash("Unidade criada com sucesso!", "success")
+        return redirect(url_for('web.listar_unidades'))
 
+    # Requisição GET: renderiza o formulário vazio
+    return render_template('unidades/form_unidade.html')
+
+
+# ✅ Rota: Editar unidade existente
+@web.route('/unidades/editar/<int:unidade_id>', methods=['GET', 'POST'])
+def editar_unidade(unidade_id):
+    unidade = UnidadeMedida.query.get_or_404(unidade_id)
+
+    if request.method == 'POST':
+        nome = request.form.get('descricao')
+        sigla = request.form.get('sigla')
+
+        print("📨 Dados recebidos (editar unidade):", request.form)
+
+        # Validação simples
+        if not nome or not sigla:
+            flash("Preencha todos os campos obrigatórios.", "error")
+            return render_template('unidades/form_unidade.html', unidade=unidade)
+
+        # Atualiza a unidade
+        unidade.descricao = nome.strip()
+        unidade.sigla = sigla.strip()
+        db.session.commit()
+
+        flash("Unidade atualizada com sucesso!", "success")
+        return redirect(url_for('web.listar_unidades'))
+
+    # Requisição GET: carrega dados no formulário
+    return render_template('unidades/form_unidade.html', unidade=unidade)
+
+
+# ✅ Rota: Excluir unidade
+@web.route('/unidades/excluir/<int:unidade_id>', methods=['POST'])
+def excluir_unidade(unidade_id):
+    unidade = UnidadeMedida.query.get_or_404(unidade_id)
     db.session.delete(unidade)
     db.session.commit()
-    return resposta_json({'mensagem': f'Unidade {unidade.sigla} excluída com sucesso.'})
+
+    flash("Unidade excluída com sucesso!", "success")
+    return redirect(url_for('web.listar_unidades'))

@@ -1,0 +1,26 @@
+<!-- Arquivo: app/templates/unidades/form_unidade.html -->
+{% extends 'base.html' %}
+
+{% block conteudo %}
+    <h2>{{ 'Editar' if unidade else 'Nova' }} Unidade de Medida</h2>
+
+    <form method="POST">
+        <!-- Campo: Nome da Unidade -->
+        <div style="margin-bottom: 10px;">
+            <label for="descricao">Nome:</label><br>
+            <input type="text" id="descricao" name="descricao" value="{{ unidade.descricao if unidade else '' }}" required>
+        </div>
+
+        <!-- Campo: Sigla da Unidade -->
+        <div style="margin-bottom: 10px;">
+            <label for="sigla">Sigla:</label><br>
+            <input type="text" id="sigla" name="sigla" value="{{ unidade.sigla if unidade else '' }}" required>
+        </div>
+
+        <!-- Botões -->
+        <div style="margin-top: 20px;">
+            <button type="submit">Salvar</button>
+            <a href="{{ url_for('web.listar_unidades') }}">Cancelar</a>
+        </div>
+    </form>
+{% endblock %}
