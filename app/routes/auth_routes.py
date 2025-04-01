@@ -29,7 +29,7 @@ def login():
             session['usuario_permissao'] = usuario.permissao
 
             # Exibe mensagem de boas-vindas
-            flash(f'Bem-vindo, {usuario.nome}!', 'success')
+            # flash(f'Bem-vindo, {usuario.nome}!', 'success')
 
             # Redireciona para a página inicial do sistema
             return redirect(url_for('web.pagina_inicial'))

@@ -1,73 +1,76 @@
+<!-- Arquivo: app/templates/base.html -->
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Gestão de Projetos{% endblock %}</title>
+    <title>Gestão de Projetos</title>
 </head>
 <body>
-    <!-- ✅ Cabeçalho -->
-    <header>
+    <!-- 🔹 Cabeçalho: título à esquerda, usuário logado à direita -->
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+        <!-- Título do sistema -->
         <h1>Gestão de Projetos</h1>
+
+        <!-- Área do usuário logado (visível apenas se logado) -->
+        {% if session.get('usuario_nome') %}
+            <div style="text-align: right;">
+                <!-- Nome do usuário -->
+                <p>👤 {{ session['usuario_nome'] }}</p>
+
+                <!-- Botão de logout -->
+                <form action="{{ url_for('web.logout') }}" method="POST">
+                    <button type="submit">Sair</button>
+                </form>
+            </div>
+        {% endif %}
     </header>
 
-    <!-- ✅ Menu de navegação principal -->
-    <nav>
-        <ul>
-            <!-- Início / Dashboard -->
-            <li><a href="{{ url_for('web.pagina_inicial') }}">🏠 Início</a></li>
+    <hr>
 
-            <!-- Módulo Projetos -->
-            <li><a href="{{ url_for('web.listar_projetos') }}">📁 Projetos</a></li>
+    <!-- 🔹 Corpo principal: menu lateral + conteúdo -->
+    <main style="display: flex; min-height: 80vh;">
+        <!-- 🔸 Menu lateral fixo -->
+        <nav style="width: 200px; padding: 20px;">
+            <ul style="list-style-type: none; padding: 0;">
+                <li><a href="{{ url_for('web.pagina_inicial') }}">🏠 Início</a></li>
+                <li><a href="{{ url_for('web.listar_projetos') }}">📁 Projetos</a></li>
+                <li><a href="{{ url_for('web.listar_clientes') }}">👥 Clientes</a></li>
+                <li><a href="{{ url_for('web.listar_fornecedores') }}">🏢 Fornecedores</a></li>
+                <li><a href="{{ url_for('web.listar_materiais') }}">📦 Materiais</a></li>
+                <li><a href="{{ url_for('web.listar_tipos') }}">✏️ Tipos</a></li>
+                <li><a href="{{ url_for('web.listar_unidades') }}">📐 Unidades</a></li>
+                <li><a href="{{ url_for('web.listar_status') }}">📋 Status</a></li>
 
-            <!-- Módulo Clientes -->
-            <li><a href="{{ url_for('web.listar_clientes') }}">👥 Clientes</a></li>
+                <!-- 🔐 Apenas para administradores -->
+                {% if session.get('usuario_permissao') == 'admin' %}
+                    <li><a href="{{ url_for('web.listar_usuarios') }}">📂 Usuários</a></li>
+                {% endif %}
+            </ul>
+        </nav>
 
-            <!-- Módulo Fornecedores -->
-            <li><a href="{{ url_for('web.listar_fornecedores') }}">🏢 Fornecedores</a></li>
+        <!-- 🔸 Área de conteúdo dinâmico -->
+        <section style="flex: 1; padding: 20px;">
+            <!-- ⚠️ Mensagens flash (sucesso, erro, aviso...) -->
+            {% with mensagens = get_flashed_messages(with_categories=true) %}
+                {% if mensagens %}
+                    <ul style="list-style: none;">
+                        {% for categoria, mensagem in mensagens %}
+                            <li><strong>{{ mensagem }}</strong></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
 
-            <!-- Módulo Materiais -->
-            <li><a href="{{ url_for('web.listar_materiais') }}">📦 Materiais</a></li>
-
-            <!-- Módulo Tipos -->
-            <li><a href="{{ url_for('web.listar_tipos') }}">🏷️ Tipos</a></li>
-
-            <!-- Módulo Unidades de Medida -->
-            <li><a href="{{ url_for('web.listar_unidades') }}">📏 Unidades</a></li>
-
-            <!-- Módulo Status de Projeto -->
-            <li><a href="{{ url_for('web.listar_status') }}">📋 Status</a></li>
-
-            <!-- ✅ Módulo Usuários – visível apenas para administradores -->
-            {% if session.get('usuario_permissao') == 'admin' %}
-                <li><a href="{{ url_for('web.listar_usuarios') }}">🔐 Usuários</a></li>
-            {% endif %}
-        </ul>
-
-        <!-- 🔹 Informações do usuário logado -->
-        {% if session.get('usuario_nome') %}
-            <p>👤 {{ session['usuario_nome'] }}</p>
-            <form action="{{ url_for('web.logout') }}" method="post">
-                <button type="submit">Sair</button>
-            </form>
-        {% endif %}
-    </nav>
-
-    <!-- ✅ Área de conteúdo dinâmico -->
-    <main>
-        {% with mensagens = get_flashed_messages(with_categories=true) %}
-            {% if mensagens %}
-                {% for categoria, msg in mensagens %}
-                    <div class="alert {{ categoria }}">{{ msg }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        {% block conteudo %}{% endblock %}
+            <!-- Bloco dinâmico de conteúdo -->
+            {% block conteudo %}{% endblock %}
+        </section>
     </main>
 
-    <!-- ✅ Rodapé -->
-    <footer>
-        <p>&copy; {{ current_year or 2025 }} - Sistema de Gestão de Projetos</p>
+    <hr>
+
+    <!-- 🔹 Rodapé do sistema -->
+    <footer style="text-align: center; padding: 10px;">
+        <p>© {{ current_year }} - Sistema de Gestão de Projetos</p>
     </footer>
 </body>
 </html>
