@@ -22,60 +22,89 @@
 
 <!-- ⚙️ Script AJAX -->
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const tipoSelect = document.getElementById('tipo_id');
-    const buscaInput = document.getElementById('busca');
-    const resultadoDiv = document.getElementById('resultado');
-
-    function buscarMateriais() {
-        const tipo_id = tipoSelect.value;
-        const busca = buscaInput.value;
-
-        if (!tipo_id) {
-            resultadoDiv.innerHTML = "<p>Selecione um tipo de material.</p>";
-            return;
-        }
-
-        fetch(`/materiais/buscar?tipo_id=${tipo_id}&q=${busca}`)
-            .then(res => res.json())
-            .then(dados => {
-                if (dados.length === 0) {
-                    resultadoDiv.innerHTML = "<p>Nenhum material encontrado.</p>";
-                } else {
-                    let html = `
-                    <table border="1" cellpadding="8" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                    `;
-                    dados.forEach(item => {
-                        html += `
-                            <tr>
-                                <td>${item.nome}</td>
-                                <td>
-                                    <a href="/materiais/${item.id}/editar">✏️ Editar</a>
-                                    <form action="/materiais/${item.id}/excluir" method="POST" style="display:inline;">
-                                        <button type="submit" onclick="return confirm('Deseja excluir este material?')">🗑️ Excluir</button>
-                                    </form>
-                                </td>
-                            </tr>
+    // ⏳ Aguarda o carregamento completo do HTML antes de executar
+    document.addEventListener('DOMContentLoaded', function () {
+    
+        // 🔽 Referência ao select de tipos de material
+        const tipoSelect = document.getElementById('tipo_id');
+    
+        // 🔤 Referência ao campo de busca por nome
+        const buscaInput = document.getElementById('busca');
+    
+        // 📦 Div onde os resultados da busca serão exibidos dinamicamente
+        const resultadoDiv = document.getElementById('resultado');
+    
+        // 🔍 Função principal que faz a busca de materiais
+        function buscarMateriais() {
+            // Obtém o valor do tipo selecionado
+            const tipo_id = tipoSelect.value;
+    
+            // Obtém o texto digitado pelo usuário
+            const busca = buscaInput.value;
+    
+            // ⚠️ Se nenhum tipo estiver selecionado, mostra aviso e sai da função
+            if (!tipo_id) {
+                resultadoDiv.innerHTML = "<p>Selecione um tipo de material.</p>";
+                return;
+            }
+    
+            // 📡 Envia requisição GET para o backend com os parâmetros tipo_id e q
+            fetch(`/materiais/buscar?tipo_id=${tipo_id}&q=${busca}`)
+    
+                // 🔄 Converte a resposta em JSON
+                .then(res => res.json())
+    
+                // ✅ Processa os dados recebidos
+                .then(dados => {
+                    // Se a resposta for uma lista vazia, mostra mensagem de nenhum encontrado
+                    if (dados.length === 0) {
+                        resultadoDiv.innerHTML = "<p>Nenhum material encontrado.</p>";
+                    } else {
+                        // 🧱 Monta a tabela HTML dinamicamente
+                        let html = `
+                        <table border="1" cellpadding="8" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                         `;
-                    });
-                    html += "</tbody></table>";
-                    resultadoDiv.innerHTML = html;
-                }
-            })
-            .catch(() => {
-                resultadoDiv.innerHTML = "<p>Erro ao buscar materiais.</p>";
-            });
-    }
-
-    tipoSelect.addEventListener('change', buscarMateriais);
-    buscaInput.addEventListener('input', buscarMateriais);
-});
-</script>
+    
+                        // Para cada material retornado, cria uma linha na tabela
+                        dados.forEach(item => {
+                            html += `
+                                <tr>
+                                    <td>${item.nome}</td>
+                                    <td>
+                                        <a href="/materiais/${item.id}/editar">✏️ Editar</a>
+                                        <form action="/materiais/${item.id}/excluir" method="POST" style="display:inline;">
+                                            <button type="submit" onclick="return confirm('Deseja excluir este material?')">🗑️ Excluir</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+    
+                        // Fecha a tabela e insere no resultado
+                        html += "</tbody></table>";
+                        resultadoDiv.innerHTML = html;
+                    }
+                })
+    
+                // ⚠️ Em caso de erro (ex: falha na conexão), mostra mensagem de erro
+                .catch(() => {
+                    resultadoDiv.innerHTML = "<p>Erro ao buscar materiais.</p>";
+                });
+        }
+    
+        // 🔄 Aciona a busca toda vez que o tipo for alterado
+        tipoSelect.addEventListener('change', buscarMateriais);
+    
+        // 🧠 Aciona a busca a cada letra digitada no campo de busca
+        buscaInput.addEventListener('input', buscarMateriais);
+    });
+    </script>
+    
 {% endblock %}

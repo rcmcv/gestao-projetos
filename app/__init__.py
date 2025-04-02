@@ -1,7 +1,7 @@
 # Arquivo: app/__init__.py
 from flask import Flask
 from dotenv import load_dotenv
-from .extensions import db, mail
+from .extensions import db, mail, migrate
 from app.routes import web_routes
 from app.api import registrar_rotas_api
 from pathlib import Path
@@ -32,6 +32,9 @@ def create_app():
     # 🔹 Inicializa as extensões
     db.init_app(app)
     mail.init_app(app)
+
+    # 🔹 Inicializa Migrate com app e db
+    migrate.init_app(app, db)
 
     # 🔹 Exibe o caminho real do banco para debug
     print("📁 Caminho final do banco:", db_uri)

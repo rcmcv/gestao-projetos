@@ -1,0 +1,74 @@
+<!-- Arquivo: templates/fornecedores/buscar_fornecedores.html -->
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<h2>🔍 Buscar Fornecedores por Tipo de Material</h2>
+
+<!-- Dropdown de tipo -->
+<label for="tipo_id">Tipo de Material:</label><br>
+<select id="tipo_id" class="form-control" style="margin-bottom: 10px;">
+    <option value="">-- Selecione --</option>
+    {% for tipo in tipos %}
+        <option value="{{ tipo.id }}">{{ tipo.nome }}</option>
+    {% endfor %}
+</select>
+
+<!-- Resultados -->
+<div id="resultado" style="margin-top: 15px;"></div>
+
+<!-- ⚙️ Script AJAX -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tipoSelect = document.getElementById('tipo_id');
+    const resultadoDiv = document.getElementById('resultado');
+
+    tipoSelect.addEventListener('change', () => {
+        const tipo_id = tipoSelect.value;
+
+        if (!tipo_id) {
+            resultadoDiv.innerHTML = "<p>Selecione um tipo.</p>";
+            return;
+        }
+
+        fetch(`/fornecedores/buscar?tipo_id=${tipo_id}`)
+            .then(res => res.json())
+            .then(dados => {
+                if (dados.length === 0) {
+                    resultadoDiv.innerHTML = "<p>Nenhum fornecedor encontrado.</p>";
+                } else {
+                    let html = `
+                    <table border="1" cellpadding="8" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CNPJ</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    `;
+                    dados.forEach(f => {
+                        html += `
+                            <tr>
+                                <td>${f.nome}</td>
+                                <td>${f.cnpj}</td>
+                                <td>
+                                    <a href="/fornecedores/${f.id}/editar">✏️ Editar</a>
+                                    <form action="/fornecedores/${f.id}/excluir" method="POST" style="display:inline;">
+                                        <button type="submit" onclick="return confirm('Excluir fornecedor?')">🗑️ Excluir</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    html += "</tbody></table>";
+                    resultadoDiv.innerHTML = html;
+                }
+            })
+            .catch(() => {
+                resultadoDiv.innerHTML = "<p>Erro ao buscar fornecedores.</p>";
+            });
+    });
+});
+</script>
+{% endblock %}

@@ -55,6 +55,13 @@ class Material(db.Model):
         return f'<Material {self.nome}>'
 
 
+# ✅ Tabela de associação entre fornecedores e tipos de material
+fornecedores_tipos = db.Table('fornecedores_tipos',
+    db.Column('fornecedor_id', db.Integer, db.ForeignKey('fornecedores.id')),
+    db.Column('tipo_id', db.Integer, db.ForeignKey('tipos_materiais.id'))
+)
+
+
 # ✅ Cria a classe Fornecedores
 class Fornecedor(db.Model):
     __tablename__ = 'fornecedores'
@@ -66,8 +73,8 @@ class Fornecedor(db.Model):
     telefone = db.Column(db.String(50))
     contato = db.Column(db.String(100))
 
-    tipo_id = db.Column(db.Integer, db.ForeignKey('tipos_materiais.id'), nullable=False)
-    tipo = db.relationship('TipoMaterial', backref='fornecedores')
+    # ✅ Relacionamento muitos-para-muitos com tipos
+    tipos = db.relationship('TipoMaterial', secondary='fornecedores_tipos', backref='fornecedores')
 
     def __repr__(self):
         return f'<Fornecedor {self.nome}>'

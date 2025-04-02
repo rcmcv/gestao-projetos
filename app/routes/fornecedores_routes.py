@@ -1,80 +1,82 @@
 # Arquivo: app/routes/fornecedores_routes.py
-# Importações necessárias
-from flask import Blueprint, request
+# Rotas da interface web relacionadas à fornecedores: cadastrar, listar, editar, excluir e busca dinâmica
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from app.extensions import db
 from app.models.models import Fornecedor, TipoMaterial
-from app.utils.resposta import resposta_json
 from .web_routes import web
+from app.forms.fornecedor_form import FornecedorForm
 
-# Criação do Blueprint para rotas do módulo "fornecedores"
-# web = Blueprint('fornecedores', __name__)
-
-# ✅ Rota para listar todos os fornecedores
-@web.route('/fornecedores', methods=['GET'])
+# ✅ Listar fornecedores
+@web.route('/fornecedores')
 def listar_fornecedores():
-    fornecedores = Fornecedor.query.all()  # Consulta todos os fornecedores no banco
-    return resposta_json([
-        {
-            'id': f.id,
-            'nome': f.nome,
-            'cnpj': f.cnpj,
-            'email': f.email,
-            'telefone': f.telefone,
-            'contato': f.contato,
-            'tipo_material': f.tipo.nome  # Acesso ao nome do tipo de material relacionado
-        } for f in fornecedores
-    ])
+    fornecedores = Fornecedor.query.all()
+    return render_template('fornecedores/listar_fornecedores.html', fornecedores=fornecedores)
 
-# ✅ Rota para adicionar novo fornecedor
-@web.route('/fornecedores', methods=['POST'])
-def adicionar_fornecedor():
-    dados = request.json  # Recebe os dados em JSON enviados na requisição
+# ✅ Cadastrar novo fornecedor
+@web.route('/fornecedores/novo', methods=['GET', 'POST'])
+def novo_fornecedor():
+    form = FornecedorForm()
+    form.tipos.choices = [(t.id, t.nome) for t in TipoMaterial.query.order_by('nome')]
 
-    # Valida campos obrigatórios
-    campos_obrigatorios = ['nome', 'cnpj', 'tipo_id']
-    if not all(dados.get(c) for c in campos_obrigatorios):
-        return resposta_json({'erro': 'Campos obrigatórios: nome, cnpj, tipo_id'}, 400)
+    if form.validate_on_submit():
+        fornecedor = Fornecedor(
+            nome=form.nome.data.strip(),
+            cnpj=form.cnpj.data.strip(),
+            email=form.email.data.strip(),
+            telefone=form.telefone.data.strip(),
+            contato=form.contato.data.strip(),
+            tipos=TipoMaterial.query.filter(TipoMaterial.id.in_(form.tipos.data)).all()
+        )
+        db.session.add(fornecedor)
+        db.session.commit()
+        flash("Fornecedor cadastrado com sucesso!", "success")
+        return redirect(url_for('web.listar_fornecedores'))
 
-    # Cria nova instância de Fornecedor
-    fornecedor = Fornecedor(
-        nome=dados['nome'],
-        cnpj=dados['cnpj'],
-        email=dados.get('email'),
-        telefone=dados.get('telefone'),
-        contato=dados.get('contato'),
-        tipo_id=dados['tipo_id']
-    )
+    return render_template('fornecedores/form_fornecedor.html', form=form, fornecedor=None)
 
-    db.session.add(fornecedor)  # Adiciona à sessão
-    db.session.commit()         # Salva no banco
-    return resposta_json({'mensagem': 'Fornecedor cadastrado com sucesso!'})
-
-# ✅ Rota para editar fornecedor existente
-@web.route('/fornecedores/<int:id>', methods=['PUT'])
+# ✅ Editar fornecedor
+@web.route('/fornecedores/<int:id>/editar', methods=['GET', 'POST'])
 def editar_fornecedor(id):
-    fornecedor = Fornecedor.query.get(id)  # Busca fornecedor pelo ID
-    if not fornecedor:
-        return resposta_json({'erro': 'Fornecedor não encontrado.'}, 404)
+    fornecedor = Fornecedor.query.get_or_404(id)
+    form = FornecedorForm(obj=fornecedor)
+    form.tipos.choices = [(t.id, t.nome) for t in TipoMaterial.query.order_by('nome')]
+    form.tipos.data = [t.id for t in fornecedor.tipos]
 
-    # Atualiza campos se enviados na requisição
-    dados = request.json
-    fornecedor.nome = dados.get('nome', fornecedor.nome)
-    fornecedor.cnpj = dados.get('cnpj', fornecedor.cnpj)
-    fornecedor.email = dados.get('email', fornecedor.email)
-    fornecedor.telefone = dados.get('telefone', fornecedor.telefone)
-    fornecedor.contato = dados.get('contato', fornecedor.contato)
-    fornecedor.tipo_id = dados.get('tipo_id', fornecedor.tipo_id)
+    if form.validate_on_submit():
+        fornecedor.nome = form.nome.data.strip()
+        fornecedor.cnpj = form.cnpj.data.strip()
+        fornecedor.email = form.email.data.strip()
+        fornecedor.telefone = form.telefone.data.strip()
+        fornecedor.contato = form.contato.data.strip()
+        fornecedor.tipos = TipoMaterial.query.filter(TipoMaterial.id.in_(form.tipos.data)).all()
 
-    db.session.commit()
-    return resposta_json({'mensagem': 'Fornecedor atualizado com sucesso.'})
+        db.session.commit()
+        flash("Fornecedor atualizado com sucesso!", "success")
+        return redirect(url_for('web.listar_fornecedores'))
 
-# ✅ Rota para excluir fornecedor
-@web.route('/fornecedores/<int:id>', methods=['DELETE'])
+    return render_template('fornecedores/form_fornecedor.html', form=form, fornecedor=fornecedor)
+
+# ✅ Excluir fornecedor
+@web.route('/fornecedores/<int:id>/excluir', methods=['POST'])
 def excluir_fornecedor(id):
-    fornecedor = Fornecedor.query.get(id)  # Busca fornecedor pelo ID
-    if not fornecedor:
-        return resposta_json({'erro': 'Fornecedor não encontrado.'}, 404)
+    fornecedor = Fornecedor.query.get_or_404(id)
+    db.session.delete(fornecedor)
+    db.session.commit()
+    flash("Fornecedor excluído com sucesso!", "success")
+    return redirect(url_for('web.listar_fornecedores'))
 
-    db.session.delete(fornecedor)  # Remove da sessão
-    db.session.commit()            # Aplica exclusão no banco
-    return resposta_json({'mensagem': f'Fornecedor {fornecedor.nome} excluído com sucesso.'})
+# ✅ Buscar fornecedores por tipo (AJAX)
+@web.route('/fornecedores/buscar', methods=['GET'])
+def buscar_fornecedores_ajax():
+    tipo_id = request.args.get('tipo_id')
+
+    if not tipo_id:
+        return jsonify({'erro': 'tipo_id é obrigatório'}), 400
+
+    fornecedores = Fornecedor.query.filter(
+        Fornecedor.tipos.any(TipoMaterial.id == tipo_id)
+    ).all()
+
+    return jsonify([
+        {'id': f.id, 'nome': f.nome, 'cnpj': f.cnpj} for f in fornecedores
+    ])

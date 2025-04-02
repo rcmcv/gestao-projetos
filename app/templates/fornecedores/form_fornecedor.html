@@ -1,0 +1,54 @@
+<!-- Arquivo: templates/fornecedores/form_fornecedor.html -->
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<h2>{{ 'Editar' if fornecedor else 'Novo' }} Fornecedor</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    <div style="margin-bottom: 10px;">
+        {{ form.nome.label }}<br>
+        {{ form.nome(class="form-control") }}
+        {% for erro in form.nome.errors %}
+            <small class="text-danger">{{ erro }}</small>
+        {% endfor %}
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        {{ form.cnpj.label }}<br>
+        {{ form.cnpj(class="form-control") }}
+        {% for erro in form.cnpj.errors %}
+            <small class="text-danger">{{ erro }}</small>
+        {% endfor %}
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        {{ form.email.label }}<br>
+        {{ form.email(class="form-control") }}
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        {{ form.telefone.label }}<br>
+        {{ form.telefone(class="form-control") }}
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        {{ form.contato.label }}<br>
+        {{ form.contato(class="form-control") }}
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        {{ form.tipos.label }}<br>
+        {{ form.tipos(class="form-control", multiple=True) }}
+        {% for erro in form.tipos.errors %}
+            <small class="text-danger">{{ erro }}</small>
+        {% endfor %}
+    </div>
+
+    <div>
+        {{ form.submit(class="btn btn-primary") }}
+        <a href="{{ url_for('web.listar_fornecedores') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}
