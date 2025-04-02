@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        fetch(`/fornecedores/buscar?tipo_id=${tipo_id}`)
+        fetch(`/fornecedores/buscar_ajax?tipo_id=${tipo_id}`)
             .then(res => res.json())
             .then(dados => {
                 if (dados.length === 0) {

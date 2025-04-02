@@ -40,7 +40,9 @@ def editar_fornecedor(id):
     fornecedor = Fornecedor.query.get_or_404(id)
     form = FornecedorForm(obj=fornecedor)
     form.tipos.choices = [(t.id, t.nome) for t in TipoMaterial.query.order_by('nome')]
-    form.tipos.data = [t.id for t in fornecedor.tipos]
+    
+    if request.method == 'GET':
+        form.tipos.data = [t.id for t in fornecedor.tipos]
 
     if form.validate_on_submit():
         fornecedor.nome = form.nome.data.strip()
@@ -65,8 +67,14 @@ def excluir_fornecedor(id):
     flash("Fornecedor excluído com sucesso!", "success")
     return redirect(url_for('web.listar_fornecedores'))
 
-# ✅ Buscar fornecedores por tipo (AJAX)
-@web.route('/fornecedores/buscar', methods=['GET'])
+# ✅ Página de busca com select
+@web.route('/fornecedores/buscar')
+def buscar_fornecedores():
+    tipos = TipoMaterial.query.order_by('nome').all()
+    return render_template('fornecedores/buscar_fornecedores.html', tipos=tipos)
+
+# ✅ Rota AJAX
+@web.route('/fornecedores/buscar_ajax')
 def buscar_fornecedores_ajax():
     tipo_id = request.args.get('tipo_id')
 
@@ -80,3 +88,4 @@ def buscar_fornecedores_ajax():
     return jsonify([
         {'id': f.id, 'nome': f.nome, 'cnpj': f.cnpj} for f in fornecedores
     ])
+

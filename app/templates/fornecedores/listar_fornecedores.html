@@ -6,28 +6,32 @@
 
 <p>
     <a href="{{ url_for('web.novo_fornecedor') }}">➕ Novo Fornecedor</a>
-    <a href="{{ url_for('web.buscar_fornecedores_ajax') }}">🔍 Buscar Fornecedor</a>
+    <a href="{{ url_for('web.buscar_fornecedores') }}">🔍 Buscar Fornecedor</a>
 </p>
 
 <table border="1" cellpadding="8" cellspacing="0">
+    <!-- Cabeçalho -->
     <thead>
         <tr>
+            <th>ID</th>
             <th>Nome</th>
             <th>CNPJ</th>
             <th>Tipos</th>
             <th>Ações</th>
         </tr>
     </thead>
+    <!-- Linhas -->
     <tbody>
         {% for fornecedor in fornecedores %}
         <tr>
+            <td>{{ fornecedor.id }}</td>
             <td>{{ fornecedor.nome }}</td>
             <td>{{ fornecedor.cnpj }}</td>
             <td>
                 {% for tipo in fornecedor.tipos %}
-                    {{ tipo.nome }}{% if not loop.last %}, {% endif %}
+                    {{ tipo.nome }}<br>
                 {% endfor %}
-            </td>
+            </td>            
             <td>
                 <a href="{{ url_for('web.editar_fornecedor', id=fornecedor.id) }}">✏️ Editar</a>
                 <form action="{{ url_for('web.excluir_fornecedor', id=fornecedor.id) }}" method="POST" style="display:inline;">
