@@ -1,82 +1,81 @@
 # Arquivo: app/routes/materiais_routes.py
-from flask import Blueprint, request
+# Rotas da interface web relacionadas à materiais: cadastrar, listar, editar, excluir e busca dinâmica
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from app.extensions import db
 from app.models.models import Material, TipoMaterial, UnidadeMedida
-from app.utils.resposta import resposta_json
 from .web_routes import web
+from app.forms.material_form import MaterialForm
 
-# web = Blueprint('materiais', __name__)
+# ✅ Lista todos os materiais
+@web.route('/materiais')
+def listar_materiais_web():
+    materiais = Material.query.order_by(Material.id).all()
+    return render_template('materiais/listar_materiais.html', materiais=materiais)
 
-# ✅ Listar materiais com nomes de tipo e unidade
-@web.route('/materiais', methods=['GET'])
-def listar_materiais():
-    materiais = Material.query.all()
-    return resposta_json([
-        {
-            'id': m.id,
-            'nome': m.nome,
-            'tipo': m.tipo.nome,
-            'unidade': m.unidade.sigla
-        } for m in materiais
-    ])
+# ✅ Adiciona novo material
+@web.route('/materiais/novo', methods=['GET', 'POST'])
+def novo_material():
+    form = MaterialForm()
+    form.tipo_id.choices = [(t.id, t.nome) for t in TipoMaterial.query.order_by('nome')]
+    form.unidade_id.choices = [(u.id, u.sigla) for u in UnidadeMedida.query.order_by('sigla')]
 
-# ✅ Adicionar novo material
-@web.route('/materiais', methods=['POST'])
-def adicionar_material():
-    dados = request.json
-    nome = dados.get('nome')
-    tipo_id = dados.get('tipo_id')
-    unidade_id = dados.get('unidade_id')
+    if form.validate_on_submit():
+        novo = Material(
+            nome=form.nome.data.strip(),
+            tipo_id=form.tipo_id.data,
+            unidade_id=form.unidade_id.data
+        )
+        db.session.add(novo)
+        db.session.commit()
+        flash("Material cadastrado com sucesso!", "success")
+        return redirect(url_for('web.listar_materiais_web'))
 
-    if not nome or not tipo_id or not unidade_id:
-        return resposta_json({'erro': 'Informe nome, tipo_id e unidade_id.'}, 400)
+    return render_template('materiais/form_material.html', form=form, material=None)
 
-    material = Material(nome=nome, tipo_id=tipo_id, unidade_id=unidade_id)
-    db.session.add(material)
-    db.session.commit()
-    return resposta_json({'mensagem': 'Material cadastrado com sucesso!'})
-
-# ✅ Editar material
-@web.route('/materiais/<int:id>', methods=['PUT'])
+# ✅ Edita material
+@web.route('/materiais/<int:id>/editar', methods=['GET', 'POST'])
 def editar_material(id):
-    material = Material.query.get(id)
-    if not material:
-        return resposta_json({'erro': 'Material não encontrado.'}, 404)
+    material = Material.query.get_or_404(id)
+    form = MaterialForm(obj=material)
+    form.tipo_id.choices = [(t.id, t.nome) for t in TipoMaterial.query.order_by('nome')]
+    form.unidade_id.choices = [(u.id, u.sigla) for u in UnidadeMedida.query.order_by('sigla')]
 
-    dados = request.json
-    material.nome = dados.get('nome', material.nome)
-    material.tipo_id = dados.get('tipo_id', material.tipo_id)
-    material.unidade_id = dados.get('unidade_id', material.unidade_id)
+    if form.validate_on_submit():
+        material.nome = form.nome.data.strip()
+        material.tipo_id = form.tipo_id.data
+        material.unidade_id = form.unidade_id.data
+        db.session.commit()
+        flash("Material atualizado com sucesso!", "success")
+        return redirect(url_for('web.listar_materiais_web'))
 
-    db.session.commit()
-    return resposta_json({'mensagem': 'Material atualizado com sucesso.'})
+    return render_template('materiais/form_material.html', form=form, material=material)
 
-# ✅ Excluir material
-@web.route('/materiais/<int:id>', methods=['DELETE'])
+# ✅ Exclui material
+@web.route('/materiais/<int:id>/excluir', methods=['POST'])
 def excluir_material(id):
-    material = Material.query.get(id)
-    if not material:
-        return resposta_json({'erro': 'Material não encontrado.'}, 404)
-
+    material = Material.query.get_or_404(id)
     db.session.delete(material)
     db.session.commit()
-    return resposta_json({'mensagem': f'Material {material.nome} excluído com sucesso.'})
+    flash("Material excluído com sucesso!", "success")
+    return redirect(url_for('web.listar_materiais_web'))
 
-# ✅ Rota para buscar materiais por tipo de material
+# ✅ Busca dinâmica por tipo e nome
 @web.route('/materiais/buscar', methods=['GET'])
-def buscar_materiais_por_tipo_e_nome():
+def buscar_materiais_web():
     tipo_id = request.args.get('tipo_id')
-    busca = request.args.get('q', '')  # texto digitado pelo usuário
+    busca = request.args.get('q', '')
 
     if not tipo_id:
-        return resposta_json({'erro': 'tipo_id é obrigatório.'}, 400)
+        return jsonify({'erro': 'tipo_id é obrigatório.'}), 400
 
-    # Filtra materiais pelo tipo e nome que contenha o texto digitado (case insensitive)
     materiais = Material.query.filter(
         Material.tipo_id == tipo_id,
         Material.nome.ilike(f"%{busca}%")
     ).all()
 
-    return resposta_json([
-        {'id': m.id, 'nome': m.nome} for m in materiais
-    ])
+    return jsonify([{'id': m.id, 'nome': m.nome} for m in materiais])
+
+@web.route('/materiais/buscar-ui')
+def buscar_materiais_ui():
+    tipos = TipoMaterial.query.order_by('nome').all()
+    return render_template('materiais/buscar_materiais.html', tipos=tipos)

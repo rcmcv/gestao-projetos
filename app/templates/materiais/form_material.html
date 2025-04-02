@@ -1,0 +1,39 @@
+<!-- Arquivo: templates/materiais/form_material.html -->
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<h2>{{ 'Editar' if material else 'Novo' }} Material</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    <div style="margin-bottom: 10px;">
+        {{ form.nome.label }}<br>
+        {{ form.nome(class="form-control") }}
+        {% for erro in form.nome.errors %}
+            <small class="text-danger">{{ erro }}</small>
+        {% endfor %}
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        {{ form.tipo_id.label }}<br>
+        {{ form.tipo_id(class="form-control") }}
+        {% for erro in form.tipo_id.errors %}
+            <small class="text-danger">{{ erro }}</small>
+        {% endfor %}
+    </div>
+
+    <div style="margin-bottom: 10px;">
+        {{ form.unidade_id.label }}<br>
+        {{ form.unidade_id(class="form-control") }}
+        {% for erro in form.unidade_id.errors %}
+            <small class="text-danger">{{ erro }}</small>
+        {% endfor %}
+    </div>
+
+    <div>
+        {{ form.submit(class="btn btn-primary") }}
+        <a href="{{ url_for('web.listar_materiais_web') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

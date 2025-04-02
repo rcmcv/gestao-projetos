@@ -1,0 +1,44 @@
+<!-- Arquivo: templates/materiais/listar_materiais.html -->
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<h2>📦 Materiais</h2>
+
+<p>
+    <a href="{{ url_for('web.novo_material') }}">➕ Novo Material</a>
+    <a href="{{ url_for('web.buscar_materiais_ui') }}">🔍 Buscar Material</a>
+</p>
+
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Unidade</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for material in materiais %}
+        <tr>
+            <td>{{ material.id }}</td>
+            <td>{{ material.nome }}</td>
+            <td>{{ material.tipo.nome }}</td>
+            <td>{{ material.unidade.sigla }}</td>
+            <td>
+                <a href="{{ url_for('web.editar_material', id=material.id) }}">✏️ Editar</a>
+                <form action="{{ url_for('web.excluir_material', id=material.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Tem certeza que deseja excluir?')">🗑️ Excluir</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5">Nenhum material cadastrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
