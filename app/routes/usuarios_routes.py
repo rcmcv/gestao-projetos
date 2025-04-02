@@ -1,10 +1,11 @@
-# app/routes/usuarios_routes.py
-
+# Arquivo: app/routes/usuarios_routes.py
+# Rotas da interface web relacionadas à usuários: cadastrar, listar, editar e excluir
 from flask import render_template, redirect, url_for, request, flash, session
 from app.models.models import Usuario
-from app import db
+from app.extensions import db
 from werkzeug.security import generate_password_hash
-from .web_routes import web  # ✅ Importa o blueprint já criado
+from .web_routes import web                     # ✅ Importa o blueprint já criado
+from app.forms.usuario_form import UsuarioForm  # ✅ Importa o formulário novo
 
 # ✅ Middleware de acesso restrito
 def admin_required():
@@ -30,21 +31,18 @@ def novo_usuario():
     if acesso:
         return acesso
 
-    if request.method == 'POST':
-        nome = request.form.get('nome')
-        email = request.form.get('email')
-        senha = request.form.get('senha')
-        permissao = request.form.get('permissao')
+    form = UsuarioForm()  # ✅ Instancia o formulário
 
-        if Usuario.query.filter_by(email=email).first():
+    if form.validate_on_submit():
+        if Usuario.query.filter_by(email=form.email.data).first():
             flash('E-mail já cadastrado.', 'warning')
             return redirect(url_for('web.novo_usuario'))
 
         novo = Usuario(
-            nome=nome,
-            email=email,
-            senha=generate_password_hash(senha),
-            permissao=permissao
+            nome=form.nome.data,
+            email=form.email.data,
+            senha=generate_password_hash(form.senha.data),
+            permissao=form.permissao.data
         )
         db.session.add(novo)
         db.session.commit()
@@ -52,7 +50,7 @@ def novo_usuario():
         flash('Usuário cadastrado com sucesso!', 'success')
         return redirect(url_for('web.listar_usuarios'))
 
-    return render_template('usuarios/form_usuario.html', usuario=None)
+    return render_template('usuarios/form_usuario.html', form=form, usuario=None)
 
 # ✅ Edita um usuário existente
 @web.route('/usuarios/<int:id>/editar', methods=['GET', 'POST'])
@@ -62,19 +60,40 @@ def editar_usuario(id):
         return acesso
 
     usuario = Usuario.query.get_or_404(id)
+    form = UsuarioForm(obj=usuario)  # ✅ Preenche o formulário com dados do banco
 
-    if request.method == 'POST':
-        usuario.nome = request.form.get('nome')
-        usuario.email = request.form.get('email')
-        usuario.permissao = request.form.get('permissao')
+    if form.validate_on_submit():
+        usuario.nome = form.nome.data
+        usuario.email = form.email.data
+        usuario.permissao = form.permissao.data
 
-        # Atualiza senha se foi preenchida
-        nova_senha = request.form.get('senha')
-        if nova_senha:
-            usuario.senha = generate_password_hash(nova_senha)
+        # Atualiza a senha se informada
+        if form.senha.data:
+            usuario.senha = generate_password_hash(form.senha.data)
 
         db.session.commit()
         flash('Usuário atualizado com sucesso!', 'success')
         return redirect(url_for('web.listar_usuarios'))
 
-    return render_template('usuarios/form_usuario.html', usuario=usuario)
+    return render_template('usuarios/form_usuario.html', form=form, usuario=usuario)
+
+# ✅ Exclui um usuário
+@web.route('/usuarios/excluir/<int:id>', methods=['POST'])
+def excluir_usuario(id):
+    if 'usuario_id' not in session:
+        flash('Você precisa estar logado para realizar essa ação.', 'danger')
+        return redirect(url_for('web.login'))
+
+    if session['usuario_id'] == id:
+        flash('Você não pode excluir o seu próprio usuário enquanto estiver logado.', 'warning')
+        return redirect(url_for('web.listar_usuarios'))
+
+    usuario = Usuario.query.get(id)
+    if not usuario:
+        flash('Usuário não encontrado.', 'danger')
+        return redirect(url_for('web.listar_usuarios'))
+
+    db.session.delete(usuario)
+    db.session.commit()
+    flash('Usuário excluído com sucesso.', 'success')
+    return redirect(url_for('web.listar_usuarios'))

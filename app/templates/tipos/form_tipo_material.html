@@ -1,0 +1,25 @@
+<!-- Arquivo: templates/tipos/form_tipo_material.html -->
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<h2>{{ 'Editar' if tipo else 'Novo' }} Tipo de Material</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    <!-- Campo: Nome -->
+    <div style="margin-bottom: 10px;">
+        {{ form.nome.label }}<br>
+        {{ form.nome(class="form-control") }}
+        {% for erro in form.nome.errors %}
+            <small class="text-danger">{{ erro }}</small>
+        {% endfor %}
+    </div>
+
+    <!-- Botões -->
+    <div style="margin-top: 20px;">
+        {{ form.submit(class="btn btn-primary") }}
+        <a href="{{ url_for('web.listar_tipos_material') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

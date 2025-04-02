@@ -5,22 +5,30 @@
     <h2>{{ 'Editar' if unidade else 'Nova' }} Unidade de Medida</h2>
 
     <form method="POST">
+        {{ form.hidden_tag() }}
+
         <!-- Campo: Nome da Unidade -->
         <div style="margin-bottom: 10px;">
-            <label for="descricao">Nome:</label><br>
-            <input type="text" id="descricao" name="descricao" value="{{ unidade.descricao if unidade else '' }}" required>
+            {{ form.descricao.label }}<br>
+            {{ form.descricao(class="form-control") }}
+            {% for erro in form.descricao.errors %}
+                <small class="text-danger">{{ erro }}</small>
+            {% endfor %}
         </div>
 
         <!-- Campo: Sigla da Unidade -->
         <div style="margin-bottom: 10px;">
-            <label for="sigla">Sigla:</label><br>
-            <input type="text" id="sigla" name="sigla" value="{{ unidade.sigla if unidade else '' }}" required>
+            {{ form.sigla.label }}<br>
+            {{ form.sigla(class="form-control") }}
+            {% for erro in form.sigla.errors %}
+                <small class="text-danger">{{ erro }}</small>
+            {% endfor %}
         </div>
 
         <!-- Botões -->
         <div style="margin-top: 20px;">
-            <button type="submit">Salvar</button>
-            <a href="{{ url_for('web.listar_unidades') }}">Cancelar</a>
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('web.listar_unidades') }}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 {% endblock %}

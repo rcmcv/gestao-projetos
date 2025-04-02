@@ -1,53 +1,54 @@
 # Arquivo: app/routes/tipos_routes.py
-from flask import Blueprint, request
-from app.models.models import TipoMaterial
-from app.utils.resposta import resposta_json
+# Rotas da interface web relacionadas à tipos de material: cadastrar, listar, editar e excluir
+from flask import render_template, request, redirect, url_for, flash
 from app.extensions import db
+from app.models.models import TipoMaterial
 from .web_routes import web
+from app.forms.tipo_material_form import TipoMaterialForm  # ✅ Novo formulário
 
-# Criação do Blueprint para rotas relacionadas a "tipos de material"
-# web = Blueprint('tipos', __name__)
+# ✅ Listar todos os tipos de material
+@web.route('/tipos-material')
+def listar_tipos_material():
+    tipos = TipoMaterial.query.order_by(TipoMaterial.id).all()
+    return render_template('tipos/listar_tipos_material.html', tipos=tipos)
 
-# ✅ Rota para listar todos os tipos de material
-@web.route('/tipos-material', methods=['GET'])
-def listar_tipos():
-    tipos = TipoMaterial.query.all()  # Busca todos os registros no banco
-    return resposta_json([
-        {'id': t.id, 'nome': t.nome} for t in tipos  # Retorna lista de dicionários
-    ])
+# ✅ Criar novo tipo de material
+@web.route('/tipos-material/novo', methods=['GET', 'POST'])
+def adicionar_tipo_material():
+    form = TipoMaterialForm()
 
-# ✅ Rota para adicionar um novo tipo de material
-@web.route('/tipos-material', methods=['POST'])
-def adicionar_tipo():
-    dados = request.json  # Recebe os dados JSON da requisição
-    nome = dados.get('nome')  # Pega o campo 'nome'
+    if form.validate_on_submit():
+        tipo = TipoMaterial(nome=form.nome.data.strip())
+        db.session.add(tipo)
+        db.session.commit()
 
-    if not nome:
-        return resposta_json({'erro': 'Informe o nome do tipo de material.'}, 400)
+        flash("Tipo de material criado com sucesso!", "success")
+        return redirect(url_for('web.listar_tipos_material'))
 
-    tipo = TipoMaterial(nome=nome)  # Cria nova instância do modelo
-    db.session.add(tipo)  # Adiciona à sessão
-    db.session.commit()  # Salva no banco
-    return resposta_json({'mensagem': 'Tipo de material cadastrado com sucesso!'})
+    return render_template('tipos/form_tipo_material.html', form=form, tipo=None)
 
-# ✅ Rota para editar (atualizar) um tipo de material existente
-@web.route('/tipos-material/<int:id>', methods=['PUT'])
-def editar_tipo(id):
-    tipo = TipoMaterial.query.get(id)  # Busca o tipo pelo ID
-    if not tipo:
-        return resposta_json({'erro': 'Tipo de material não encontrado.'}, 404)
+# ✅ Editar tipo de material
+@web.route('/tipos-material/<int:id>/editar', methods=['GET', 'POST'])
+def editar_tipo_material(id):
+    tipo = TipoMaterial.query.get_or_404(id)
+    form = TipoMaterialForm(obj=tipo)
 
-    tipo.nome = request.json.get('nome', tipo.nome)  # Atualiza o nome, se informado
-    db.session.commit()  # Salva no banco
-    return resposta_json({'mensagem': 'Tipo de material atualizado com sucesso.'})
+    if form.validate_on_submit():
+        tipo.nome = form.nome.data.strip()
+        db.session.commit()
 
-# ✅ Rota para excluir um tipo de material
-@web.route('/tipos-material/<int:id>', methods=['DELETE'])
-def excluir_tipo(id):
-    tipo = TipoMaterial.query.get(id)  # Busca pelo ID
-    if not tipo:
-        return resposta_json({'erro': 'Tipo de material não encontrado.'}, 404)
+        flash("Tipo de material atualizado com sucesso!", "success")
+        return redirect(url_for('web.listar_tipos_material'))
 
-    db.session.delete(tipo)  # Remove da sessão
-    db.session.commit()  # Aplica exclusão no banco
-    return resposta_json({'mensagem': f'Tipo {tipo.nome} excluído com sucesso.'})
+    return render_template('tipos/form_tipo_material.html', form=form, tipo=tipo)
+
+# ✅ Excluir tipo de material
+@web.route('/tipos-material/<int:id>/excluir', methods=['POST'])
+def excluir_tipo_material(id):
+    tipo = TipoMaterial.query.get_or_404(id)
+    db.session.delete(tipo)
+    db.session.commit()
+
+    flash("Tipo de material excluído com sucesso!", "success")
+    return redirect(url_for('web.listar_tipos_material'))
+

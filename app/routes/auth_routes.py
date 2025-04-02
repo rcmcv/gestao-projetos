@@ -90,26 +90,3 @@ def pagina_inicial():
         return redirect(url_for('web.login'))
 
     return render_template('index.html')
-
-# ✅ Exclui um usuário
-@web.route('/usuarios/excluir/<int:id>', methods=['POST'])
-def excluir_usuario(id):
-    # Verifica se há usuário logado
-    if 'usuario_id' not in session:
-        flash('Você precisa estar logado para realizar essa ação.', 'danger')
-        return redirect(url_for('web.login'))
-
-    # Impede que o próprio usuário se exclua
-    if session['usuario_id'] == id:
-        flash('Você não pode excluir o seu próprio usuário enquanto estiver logado.', 'warning')
-        return redirect(url_for('web.listar_usuarios'))
-
-    usuario = Usuario.query.get(id)
-    if not usuario:
-        flash('Usuário não encontrado.', 'danger')
-        return redirect(url_for('web.listar_usuarios'))
-
-    db.session.delete(usuario)
-    db.session.commit()
-    flash('Usuário excluído com sucesso.', 'success')
-    return redirect(url_for('web.listar_usuarios'))
