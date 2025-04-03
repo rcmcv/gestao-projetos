@@ -2,12 +2,13 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-<h2>{{ 'Editar' if fornecedor else 'Novo' }} Fornecedor</h2>
+<h2>{{ titulo }}</h2>
 
 <form method="POST">
     {{ form.hidden_tag() }}
 
-    <div style="margin-bottom: 10px;">
+    <!-- Campo Nome -->
+    <div class="form-group">
         {{ form.nome.label }}<br>
         {{ form.nome(class="form-control") }}
         {% for erro in form.nome.errors %}
@@ -15,7 +16,8 @@
         {% endfor %}
     </div>
 
-    <div style="margin-bottom: 10px;">
+    <!-- Campo CNPJ -->
+    <div class="form-group">
         {{ form.cnpj.label }}<br>
         {{ form.cnpj(class="form-control") }}
         {% for erro in form.cnpj.errors %}
@@ -23,32 +25,103 @@
         {% endfor %}
     </div>
 
-    <div style="margin-bottom: 10px;">
+    <!-- Campo Email -->
+    <div class="form-group">
         {{ form.email.label }}<br>
         {{ form.email(class="form-control") }}
-    </div>
-
-    <div style="margin-bottom: 10px;">
-        {{ form.telefone.label }}<br>
-        {{ form.telefone(class="form-control") }}
-    </div>
-
-    <div style="margin-bottom: 10px;">
-        {{ form.contato.label }}<br>
-        {{ form.contato(class="form-control") }}
-    </div>
-
-    <div style="margin-bottom: 10px;">
-        {{ form.tipos.label }}<br>
-        {{ form.tipos(class="form-control", multiple=True) }}
-        {% for erro in form.tipos.errors %}
+        {% for erro in form.email.errors %}
             <small class="text-danger">{{ erro }}</small>
         {% endfor %}
     </div>
 
-    <div>
-        {{ form.submit(class="btn btn-primary") }}
-        <a href="{{ url_for('web.listar_fornecedores') }}" class="btn btn-secondary">Cancelar</a>
+    <!-- Campo Telefone -->
+    <div class="form-group">
+        {{ form.telefone.label }}<br>
+        {{ form.telefone(class="form-control") }}
+        {% for erro in form.telefone.errors %}
+            <small class="text-danger">{{ erro }}</small>
+        {% endfor %}
     </div>
+
+    <!-- Campo Contato -->
+    <div class="form-group">
+        {{ form.contato.label }}<br>
+        {{ form.contato(class="form-control") }}
+        {% for erro in form.contato.errors %}
+            <small class="text-danger">{{ erro }}</small>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <!-- Tipos de Material -->
+    <h4>Tipos de Material</h4>
+    <select id="tipo_select" class="form-control" style="max-width: 400px; margin-bottom: 10px;">
+        <option value="">-- Selecione um tipo --</option>
+        {% for tipo in tipos %}
+            <option value="{{ tipo.id }}">{{ tipo.nome }}</option>
+        {% endfor %}
+    </select>
+    <button type="button" class="btn btn-secondary" onclick="adicionarTipo()">➕ Adicionar</button>
+    <input type="hidden" name="tipos" id="tipos_ids">
+    <table class="table table-bordered mt-3" id="tabela_tipos">
+        <thead>
+            <tr><th>Tipo</th><th>Ação</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <hr>
+    {{ form.submit(class="btn btn-primary") }}
+    <a href="{{ url_for('web.listar_fornecedores') }}" class="btn btn-secondary">Voltar</a>
 </form>
+
+<script>
+let tiposSelecionados = []
+function adicionarTipo() {
+    const select = document.getElementById('tipo_select');
+    const tipoId = select.value;
+    const tipoNome = select.options[select.selectedIndex].text;
+    if (!tipoId) return;
+    if (tiposSelecionados.some(t => t.id === tipoId)) {
+        alert('Tipo já adicionado!');
+        return;
+    }
+    tiposSelecionados.push({ id: tipoId, nome: tipoNome });
+    atualizarCampoOculto();
+    renderizarTabela();
+    select.value = '';
+}
+function removerTipo(id) {
+    tiposSelecionados = tiposSelecionados.filter(t => t.id !== id);
+    atualizarCampoOculto();
+    renderizarTabela();
+}
+function atualizarCampoOculto() {
+    document.getElementById('tipos_ids').value = tiposSelecionados.map(t => t.id).join(',');
+}
+function renderizarTabela() {
+    const tbody = document.querySelector('#tabela_tipos tbody');
+    tbody.innerHTML = '';
+    tiposSelecionados.forEach(tipo => {
+        const linha = document.createElement('tr');
+        linha.innerHTML = `
+            <td>${tipo.nome}</td>
+            <td><button type="button" class="btn btn-danger btn-sm" onclick="removerTipo('${tipo.id}')">🗑️ Remover</button></td>
+        `;
+        tbody.appendChild(linha);
+    });
+}
+{% if fornecedor %}
+    {% for tipo in fornecedor.tipos %}
+        tiposSelecionados.push({ id: "{{ tipo.id }}", nome: "{{ tipo.nome }}" });
+    {% endfor %}
+    atualizarCampoOculto();
+    renderizarTabela();
+{% endif %}
+document.querySelector('form').addEventListener('submit', function () {
+    atualizarCampoOculto();
+});
+</script>
+
 {% endblock %}

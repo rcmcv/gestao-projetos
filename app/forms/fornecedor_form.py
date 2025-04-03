@@ -13,6 +13,6 @@ class FornecedorForm(FlaskForm):
     contato = StringField('Pessoa de Contato', validators=[Length(max=100)])
 
     # ✅ Permite selecionar múltiplos tipos de material
-    tipos = SelectMultipleField('Tipos de Material', coerce=int, validators=[DataRequired()])
+    # tipos = SelectMultipleField('Tipos de Material', coerce=int, validators=[DataRequired()])
 
     submit = SubmitField('Salvar')

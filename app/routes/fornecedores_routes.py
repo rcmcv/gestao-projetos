@@ -16,47 +16,48 @@ def listar_fornecedores():
 @web.route('/fornecedores/novo', methods=['GET', 'POST'])
 def novo_fornecedor():
     form = FornecedorForm()
-    form.tipos.choices = [(t.id, t.nome) for t in TipoMaterial.query.order_by('nome')]
+    tipos = TipoMaterial.query.order_by('nome').all()
 
     if form.validate_on_submit():
+        tipos_ids = request.form.get('tipos', '')
+        ids = [int(i) for i in tipos_ids.split(',') if i.isdigit()]
         fornecedor = Fornecedor(
             nome=form.nome.data.strip(),
             cnpj=form.cnpj.data.strip(),
             email=form.email.data.strip(),
             telefone=form.telefone.data.strip(),
             contato=form.contato.data.strip(),
-            tipos=TipoMaterial.query.filter(TipoMaterial.id.in_(form.tipos.data)).all()
+            tipos=TipoMaterial.query.filter(TipoMaterial.id.in_(ids)).all()
         )
         db.session.add(fornecedor)
         db.session.commit()
         flash("Fornecedor cadastrado com sucesso!", "success")
         return redirect(url_for('web.listar_fornecedores'))
 
-    return render_template('fornecedores/form_fornecedor.html', form=form, fornecedor=None)
+    return render_template('fornecedores/form_fornecedor.html', form=form, titulo="Cadastrar Fornecedor", tipos=tipos)
 
 # ✅ Editar fornecedor
 @web.route('/fornecedores/<int:id>/editar', methods=['GET', 'POST'])
 def editar_fornecedor(id):
     fornecedor = Fornecedor.query.get_or_404(id)
     form = FornecedorForm(obj=fornecedor)
-    form.tipos.choices = [(t.id, t.nome) for t in TipoMaterial.query.order_by('nome')]
-    
-    if request.method == 'GET':
-        form.tipos.data = [t.id for t in fornecedor.tipos]
+    tipos = TipoMaterial.query.order_by('nome').all()
 
     if form.validate_on_submit():
+        tipos_ids = request.form.get('tipos', '')
+        ids = [int(i) for i in tipos_ids.split(',') if i.isdigit()]
         fornecedor.nome = form.nome.data.strip()
         fornecedor.cnpj = form.cnpj.data.strip()
         fornecedor.email = form.email.data.strip()
         fornecedor.telefone = form.telefone.data.strip()
         fornecedor.contato = form.contato.data.strip()
-        fornecedor.tipos = TipoMaterial.query.filter(TipoMaterial.id.in_(form.tipos.data)).all()
+        fornecedor.tipos = TipoMaterial.query.filter(TipoMaterial.id.in_(ids)).all()
 
         db.session.commit()
         flash("Fornecedor atualizado com sucesso!", "success")
         return redirect(url_for('web.listar_fornecedores'))
 
-    return render_template('fornecedores/form_fornecedor.html', form=form, fornecedor=fornecedor)
+    return render_template('fornecedores/form_fornecedor.html', form=form, fornecedor=fornecedor, titulo="Editar Fornecedor", tipos=tipos)
 
 # ✅ Excluir fornecedor
 @web.route('/fornecedores/<int:id>/excluir', methods=['POST'])
