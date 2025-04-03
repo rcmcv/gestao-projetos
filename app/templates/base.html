@@ -3,74 +3,86 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Gestão de Projetos</title>
+    <title>{{ titulo if titulo else "Gestão de Projetos" }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Estilo customizado -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
 </head>
 <body>
-    <!-- 🔹 Cabeçalho: título à esquerda, usuário logado à direita -->
-    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-        <!-- Título do sistema -->
-        <h1>Gestão de Usinagem</h1>
 
-        <!-- Área do usuário logado (visível apenas se logado) -->
-        {% if session.get('usuario_nome') %}
-            <div style="text-align: right;">
-                <!-- Nome do usuário -->
-                <p>👤 {{ session['usuario_nome'] }}</p>
-
-                <!-- Botão de logout -->
-                <form action="{{ url_for('web.logout') }}" method="POST">
-                    <button type="submit">Sair</button>
-                </form>
+    <!-- 🔵 TOPO FIXO -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <button class="btn btn-outline-light me-3" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <span class="navbar-brand mb-0 h1">Gestão de Projetos</span>
+    
+            <!-- 🧑 Usuário e logout -->
+            <div class="ms-auto d-flex align-items-center">
+                {% if session.get('usuario_nome') %}
+                    <span class="text-white me-3">
+                        <i class="bi bi-person-circle"></i> {{ session['usuario_nome'] }}
+                    </span>
+                    <form action="{{ url_for('web.logout') }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </button>
+                    </form>
+                {% endif %}
             </div>
-        {% endif %}
-    </header>
+        </div>
+    </nav>    
 
-    <hr>
+    <!-- 📦 LAYOUT PRINCIPAL -->
+    <div class="d-flex" id="layout">
+        <!-- 🟦 MENU LATERAL -->
+        <div id="sidebar" class="bg-light border-end">
+            <div class="list-group list-group-flush pt-5">
+                <a href="{{ url_for('web.pagina_inicial') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-house-door"></i> Início
+                </a>
+                <a href="{{ url_for('web.listar_fornecedores') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-truck"></i> Fornecedores
+                </a>
+                <a href="{{ url_for('web.listar_materiais_web') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-box-seam"></i> Materiais
+                </a>
+                <!-- Adicione mais links aqui -->
+            </div>
+        </div>
 
-    <!-- 🔹 Corpo principal: menu lateral + conteúdo -->
-    <main style="display: flex; min-height: 80vh;">
-        <!-- 🔸 Menu lateral fixo -->
-        <nav style="width: 200px; padding: 20px;">
-            <ul style="list-style-type: none; padding: 0;">
-                <li><a href="{{ url_for('web.pagina_inicial') }}">🏠 Início</a></li>
-                <li><a href="{{ url_for('web.listar_unidades') }}">📐 Unidades</a></li>
-                <li><a href="{{ url_for('web.listar_tipos_material') }}">✏️ Tipos</a></li>
-                <li><a href="{{ url_for('web.listar_materiais_web') }}">📦 Materiais</a></li>
-                <li><a href="{{ url_for('web.listar_fornecedores') }}">🏢 Fornecedores</a></li>
-                <li><a href="{{ url_for('web.listar_clientes') }}">👥 Clientes</a></li>
-                <li><a href="{{ url_for('web.listar_status') }}">📋 Status</a></li>
-                <li><a href="{{ url_for('web.listar_projetos') }}">📁 Projetos</a></li>
-
-                <!-- 🔐 Apenas para administradores -->
-                {% if session.get('usuario_permissao') == 'admin' %}
-                    <li><a href="{{ url_for('web.listar_usuarios') }}">📂 Usuários</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-
-        <!-- 🔸 Área de conteúdo dinâmico -->
-        <section style="flex: 1; padding: 20px;">
-            <!-- ⚠️ Mensagens flash (sucesso, erro, aviso...) -->
+        <!-- ⚪ CONTEÚDO -->
+        <div id="conteudo" class="p-4 pt-5">
             {% with mensagens = get_flashed_messages(with_categories=true) %}
-                {% if mensagens %}
-                    <ul style="list-style: none;">
-                        {% for categoria, mensagem in mensagens %}
-                            <li><strong>{{ mensagem }}</strong></li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+              {% if mensagens %}
+                {% for categoria, mensagem in mensagens %}
+                  <div class="alert alert-{{ categoria }} alert-dismissible fade show" role="alert">
+                    {{ mensagem }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
             {% endwith %}
 
-            <!-- Bloco dinâmico de conteúdo -->
             {% block conteudo %}{% endblock %}
-        </section>
-    </main>
+        </div>
+    </div>
 
-    <hr>
-
-    <!-- 🔹 Rodapé do sistema -->
-    <footer style="text-align: center; padding: 10px;">
-        <p>© {{ current_year }} - Sistema de Gestão de Projetos</p>
-    </footer>
+    <!-- JS Bootstrap + Toggle Menu -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 🧠 Toggle da sidebar
+        document.getElementById("sidebarToggle").addEventListener("click", function () {
+            document.getElementById("sidebar").classList.toggle("d-none");
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,81 @@
+/* 🔵 Define altura total e rolagem apenas no conteúdo */
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+#layout {
+    height: 100vh;
+    margin-top: 56px; /* Altura do topo fixo */
+}
+
+#sidebar {
+    width: 220px;
+    overflow-y: auto;
+    height: 100%;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    z-index: 1000;
+}
+
+#conteudo {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-left: 220px;
+    height: calc(100vh - 56px);
+}
+
+/* Quando a sidebar for ocultada */
+#sidebar.d-none + #conteudo {
+    margin-left: 0;
+}
+
+/* Estilo da tabela, botões e links */
+.table th, .table td {
+    vertical-align: middle;
+}
+
+a.list-group-item {
+    font-weight: 500;
+}
+
+a.list-group-item:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 70px); /* ajusta altura com topo */
+    padding: 1rem;
+    padding-top: 70px; /* evita sobrepor a navbar */
+}
+
+.login-box {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* 🔵 Altura customizada para o topo */
+.navbar {
+    height: 70px; /* ou a altura que você quiser */
+    display: flex;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* 🔧 Corrige o texto do título */
+.navbar .navbar-brand {
+    line-height: 1;              /* remove espaço extra */
+    padding: 0;                  /* remove padding interno */
+    margin: 0;                   /* zera margens */
+    font-size: 1.5rem;
+}

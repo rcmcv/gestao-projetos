@@ -4,6 +4,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from app.models.models import Usuario
 from app import db
+from app.forms.login_form import LoginForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.utils.email_utils import enviar_nova_senha
 from app.utils.resposta import resposta_json
@@ -12,37 +13,31 @@ from .web_routes import web  # Usamos o blueprint "web" unificado para todas as 
 # ✅ Tela de login – exibe o formulário e processa autenticação
 @web.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        # Obtém os dados do formulário
-        email = request.form.get('email')
-        senha = request.form.get('senha')
+    form = LoginForm()
 
-        # Busca o usuário pelo email
+    if form.validate_on_submit():
+        email = form.email.data.strip()
+        senha = form.senha.data.strip()
+
         usuario = Usuario.query.filter_by(email=email).first()
 
-        # Verifica se o usuário existe e se a senha está correta
         if usuario and check_password_hash(usuario.senha, senha):
-            # Login OK → salva os dados do usuário na sessão
+            # ✅ Login ok → salva dados na sessão
             session['usuario_id'] = usuario.id
             session['usuario_nome'] = usuario.nome
             session['usuario_email'] = usuario.email
             session['usuario_permissao'] = usuario.permissao
 
-            # Exibe mensagem de boas-vindas
-            # flash(f'Bem-vindo, {usuario.nome}!', 'success')
-
-            # Redireciona para a página inicial do sistema
+            flash(f'Bem-vindo, {usuario.nome}!', 'success')
             return redirect(url_for('web.pagina_inicial'))
         else:
-            # Email ou senha incorretos → exibe mensagem de erro
-            erro = 'Email ou senha inválidos.'
-            return render_template('login.html', erro=erro)
+            flash('Email ou senha inválidos.', 'danger')
 
-    # Requisição GET → limpa mensagens antigas (ex: logout) da sessão
+    # Limpa mensagens antigas na tela de login
     session.pop('_flashes', None)
 
-    # Renderiza o formulário de login
-    return render_template('login.html')
+    # Renderiza o formulário com o WTForms
+    return render_template('login.html', form=form)
 
 # ✅ Logout – limpa a sessão do usuário e redireciona para login
 @web.route('/logout', methods=['POST'])
