@@ -3,27 +3,28 @@
 {% extends 'base_public.html' %}
 
 {% block conteudo %}
-    <!-- 🔐 Título da página -->
-    <h2>📧 Recuperar Senha</h2>
+<div class="login-container">
+    <div class="login-box shadow">
+        <h4 class="text-center text-primary mb-4">Recuperar Senha</h4>
 
-    <!-- 🔸 Formulário para o usuário informar o e-mail -->
-    <form method="POST" action="{{ url_for('web.recuperar_senha') }}">
-        <div style="margin-bottom: 10px;">
-            <label for="email">Informe seu e-mail cadastrado:</label><br>
-            <input type="email" name="email" id="email" required>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control", placeholder="Digite seu e-mail") }}
+            </div>
+
+            <div class="d-grid">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="{{ url_for('web.login') }}" class="text-decoration-none">
+                Voltar para login
+            </a>
         </div>
-
-        <!-- 🔘 Botão para envio do e-mail -->
-        <button type="submit">Enviar nova senha</button>
-    </form>
-
-    <!-- 🔙 Link para retornar à tela de login -->
-    <p style="margin-top: 15px;">
-        <a href="{{ url_for('web.login') }}">← Voltar para o login</a>
-    </p>
-
-    <!-- ⚠️ Caso ocorra algum erro -->
-    {% if erro %}
-        <p style="color: red;"><strong>{{ erro }}</strong></p>
-    {% endif %}
+    </div>
+</div>
 {% endblock %}

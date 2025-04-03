@@ -5,7 +5,7 @@ from app.models.models import Usuario
 from app.extensions import db
 from werkzeug.security import generate_password_hash
 from .web_routes import web                     # ✅ Importa o blueprint já criado
-from app.forms.usuario_form import UsuarioForm  # ✅ Importa o formulário novo
+from app.forms.usuario_form import UsuarioFormCriar, UsuarioFormEditar  # ✅ Importa o formulário novo
 
 # ✅ Middleware de acesso restrito
 def admin_required():
@@ -31,7 +31,7 @@ def novo_usuario():
     if acesso:
         return acesso
 
-    form = UsuarioForm()  # ✅ Instancia o formulário
+    form = UsuarioFormCriar()  # ✅ Instancia o formulário
 
     if form.validate_on_submit():
         if Usuario.query.filter_by(email=form.email.data).first():
@@ -60,14 +60,14 @@ def editar_usuario(id):
         return acesso
 
     usuario = Usuario.query.get_or_404(id)
-    form = UsuarioForm(obj=usuario)  # ✅ Preenche o formulário com dados do banco
+    form = UsuarioFormEditar(obj=usuario)  # ✅ Preenche o formulário com dados do banco
 
     if form.validate_on_submit():
         usuario.nome = form.nome.data
         usuario.email = form.email.data
         usuario.permissao = form.permissao.data
 
-        # Atualiza a senha se informada
+        # Atualiza senha somente se preenchida
         if form.senha.data:
             usuario.senha = generate_password_hash(form.senha.data)
 

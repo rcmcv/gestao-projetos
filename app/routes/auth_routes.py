@@ -5,6 +5,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from app.models.models import Usuario
 from app import db
 from app.forms.login_form import LoginForm
+from app.forms.recuperar_senha_form import RecuperarSenhaForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.utils.email_utils import enviar_nova_senha
 from app.utils.resposta import resposta_json
@@ -48,30 +49,17 @@ def logout():
 
 # ✅ Rota para recuperação de senha
 @web.route('/recuperar-senha', methods=['GET', 'POST'], endpoint='recuperar_senha')
-def recuperar_senha_form():
-    if request.method == 'POST':
-        email = request.form.get('email')
+def recuperar_senha():
+    form = RecuperarSenhaForm()
 
-        if not email:
-            flash('Por favor, informe um e-mail válido.', 'warning')
-            return redirect(url_for('web.recuperar_senha'))
-
-        usuario = Usuario.query.filter_by(email=email).first()
-
-        if not usuario:
-            flash('E-mail não encontrado no sistema.', 'danger')
-            return redirect(url_for('web.recuperar_senha'))
-
-        try:
-            enviar_nova_senha(email)
-            flash('Nova senha enviada para seu e-mail.', 'success')
-        except Exception as e:
-            flash('Erro ao enviar o e-mail. Tente novamente mais tarde.', 'danger')
-            print(f"[ERRO] Falha no envio do e-mail: {e}")  # Para log em terminal
-
+    if form.validate_on_submit():
+        email = form.email.data.strip()
+        # Chama a função de envio de nova senha (já implementada)
+        enviar_nova_senha(email)
+        flash('Uma nova senha foi enviada para seu e-mail.', 'success')
         return redirect(url_for('web.login'))
 
-    return render_template('recuperar_senha.html')
+    return render_template('recuperar_senha.html', form=form)
 
 # ✅ Redireciona rota raiz para a tela de login
 @web.route('/')
