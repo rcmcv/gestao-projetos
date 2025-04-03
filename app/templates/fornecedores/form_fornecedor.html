@@ -112,16 +112,25 @@ function renderizarTabela() {
         tbody.appendChild(linha);
     });
 }
+
+// Ao editar ou ao retornar após erro, carregar tipos já selecionados
 {% if fornecedor %}
     {% for tipo in fornecedor.tipos %}
         tiposSelecionados.push({ id: "{{ tipo.id }}", nome: "{{ tipo.nome }}" });
     {% endfor %}
-    atualizarCampoOculto();
-    renderizarTabela();
+{% elif tipos_iniciais %}
+    {% for id in tipos_iniciais %}
+        {% for tipo in tipos %}
+            {% if tipo.id == id %}
+                tiposSelecionados.push({ id: "{{ tipo.id }}", nome: "{{ tipo.nome }}" });
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
 {% endif %}
-document.querySelector('form').addEventListener('submit', function () {
-    atualizarCampoOculto();
-});
+
+atualizarCampoOculto();
+renderizarTabela();
+
 </script>
 
 {% endblock %}
