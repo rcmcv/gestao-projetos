@@ -13,18 +13,6 @@
             </a>
         </div>
     </div>
-
-    {% with mensagens = get_flashed_messages(with_categories=true) %}
-      {% if mensagens %}
-        {% for categoria, mensagem in mensagens %}
-          <div class="alert alert-{{ categoria }} alert-dismissible fade show" role="alert">
-            {{ mensagem }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
     <div class="table-responsive shadow-sm">
         <table class="table table-hover align-middle">
             <thead class="table-light">

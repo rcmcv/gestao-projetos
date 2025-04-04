@@ -7,24 +7,19 @@
         <h2 class="text-primary mb-0">
             <i class="bi bi-box-seam me-2"></i> Materiais Cadastrados
         </h2>
-        <div class="col-md-2 d-grid">
-            <a href="{{ url_for('web.novo_material') }}" class="btn btn-success w-100">
-                <i class="bi bi-plus-circle"></i> Novo Cadastro
-            </a>
-        </div>
+        <div class="row mb-4">
+            <div class="col-auto d-grid">
+                <a href="{{ url_for('web.buscar_materiais_ui') }}" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Pesquisar Material
+                </a>
+            </div>
+            <div class="col-auto d-grid">
+                <a href="{{ url_for('web.novo_material') }}" class="btn btn-success w-100">
+                    <i class="bi bi-plus-circle"></i> Novo Cadastro
+                </a>
+            </div>
+        </div>                
     </div>
-
-    {% with mensagens = get_flashed_messages(with_categories=true) %}
-      {% if mensagens %}
-        {% for categoria, mensagem in mensagens %}
-          <div class="alert alert-{{ categoria }} alert-dismissible fade show" role="alert">
-            {{ mensagem }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
     <div class="table-responsive shadow-sm">
         <table class="table table-hover align-middle">
             <thead class="table-light">
