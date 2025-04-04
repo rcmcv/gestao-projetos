@@ -6,6 +6,19 @@
 <div class="login-container">
     <div class="login-box shadow">
         <h3 class="text-center text-primary mb-4">Acessar Sistema</h3>
+
+        {# 🔔 Bloco para exibir mensagens flash (erro ou sucesso) #}
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+          {% if mensagens %}
+            {% for categoria, mensagem in mensagens %}
+              <div class="alert alert-{{ categoria }} alert-dismissible fade show" role="alert">
+                {{ mensagem }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
         <form method="POST">
             {{ form.hidden_tag() }}
             <div class="mb-3">
