@@ -2,37 +2,59 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-<h2>📦 Tipos de Material</h2>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary mb-0">
+            <i class="bi bi-boxes"></i> Tipos de Material
+        </h2>
+        <div class="col-md-2 d-grid">
+            <a href="{{ url_for('web.adicionar_tipo_material') }}" class="btn btn-success w-100">
+                <i class="bi bi-plus-circle"></i> Novo Cadastro
+            </a>
+        </div>
+    </div>
 
-<!-- Botão para novo -->
-<p><a href="{{ url_for('web.adicionar_tipo_material') }}">➕ Novo Tipo</a></p>
-
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for tipo in tipos %}
-        <tr>
-            <td>{{ tipo.id }}</td>
-            <td>{{ tipo.nome }}</td>
-            <td>
-                <a href="{{ url_for('web.editar_tipo_material', id=tipo.id) }}">✏️ Editar</a>
-
-                <form action="{{ url_for('web.excluir_tipo_material', id=tipo.id) }}" method="POST" style="display:inline;">
-                    <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este tipo?')">🗑️ Excluir</button>
-                </form>
-            </td>
-        </tr>
-        {% else %}
-        <tr>
-            <td colspan="3">Nenhum tipo de material cadastrado.</td>
-        </tr>
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% if mensagens %}
+        {% for categoria, mensagem in mensagens %}
+          <div class="alert alert-{{ categoria }} alert-dismissible fade show" role="alert">
+            {{ mensagem }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+          </div>
         {% endfor %}
-    </tbody>
-</table>
+      {% endif %}
+    {% endwith %}
+
+    <div class="table-responsive shadow-sm">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Descrição</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tipo in tipos %}
+                <tr>
+                    <td>{{ tipo.nome }}</td>
+                    <td class="text-end">
+                        <a href="{{ url_for('web.editar_tipo_material', id=tipo.id) }}" class="btn btn-sm btn-outline-primary me-2">
+                            ✏️ Editar
+                        </a>
+                        <form action="{{ url_for('web.excluir_tipo_material', id=tipo.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deseja excluir este tipo?')">
+                                🗑️ Excluir
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="2">Nenhum tipo cadastrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}
