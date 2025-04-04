@@ -49,15 +49,28 @@
                 <a href="{{ url_for('web.pagina_inicial') }}" class="list-group-item list-group-item-action">
                     <i class="bi bi-house-door"></i> Início
                 </a>
-                <a href="{{ url_for('web.listar_fornecedores') }}" class="list-group-item list-group-item-action">
-                    <i class="bi bi-truck"></i> Fornecedores
+        
+                <a href="{{ url_for('web.listar_usuarios') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-person-circle"></i> Usuários
                 </a>
+        
+                <a href="{{ url_for('web.listar_unidades') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-rulers"></i> Unidades
+                </a>
+        
+                <a href="{{ url_for('web.listar_tipos_material') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-boxes"></i> Tipos de Material
+                </a>
+        
                 <a href="{{ url_for('web.listar_materiais_web') }}" class="list-group-item list-group-item-action">
                     <i class="bi bi-box-seam"></i> Materiais
                 </a>
-                <!-- Adicione mais links aqui -->
+        
+                <a href="{{ url_for('web.listar_fornecedores') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-truck"></i> Fornecedores
+                </a>
             </div>
-        </div>
+        </div>        
 
         <!-- ⚪ CONTEÚDO -->
         <div id="conteudo" class="p-4 pt-5">

@@ -3,49 +3,59 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-    <!-- 🔹 Título da página -->
-    <h2>📂 Usuários</h2>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary mb-0">
+            <i class="bi bi-people-fill me-2"></i> Usuários Cadastrados
+        </h2>
+        <div class="col-md-2 d-grid">
+            <a href="{{ url_for('web.novo_usuario') }}" class="btn btn-success w-100">
+                <i class="bi bi-plus-circle"></i> Novo Usuário
+            </a>
+        </div>        
+    </div>
 
-    <!-- ➕ Botão para adicionar novo usuário -->
-    <p>
-        <a href="{{ url_for('web.novo_usuario') }}">➕ Novo Usuário</a>
-    </p>
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% if mensagens %}
+        {% for categoria, mensagem in mensagens %}
+          <div class="alert alert-{{ categoria }} alert-dismissible fade show" role="alert">
+            {{ mensagem }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-    <!-- 📋 Tabela de usuários -->
-    <table border="1" cellpadding="8" cellspacing="0">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <th>Permissão</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for usuario in usuarios %}
+    <div class="table-responsive shadow-sm">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
                 <tr>
-                    <td>{{ usuario.id }}</td>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Permissão</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
                     <td>{{ usuario.nome }}</td>
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.permissao }}</td>
-                    <td>
-                        <!-- ✏️ Editar -->
-                        <a href="{{ url_for('web.editar_usuario', id=usuario.id) }}">✏️ Editar</a>
-
-                        <!-- 🗑️ Excluir (exceto o logado) -->
-                        {% if session.get('usuario_id') != usuario.id %}
-                            <form action="{{ url_for('web.excluir_usuario', id=usuario.id) }}" method="POST" style="display:inline;">
-                                <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">🗑️ Excluir</button>
-                            </form>
-                        {% endif %}
+                    <td class="text-end">
+                        <a href="{{ url_for('web.editar_usuario', id=usuario.id) }}" class="btn btn-sm btn-outline-primary me-2">
+                            ✏️ Editar
+                        </a>
+                        <form action="{{ url_for('web.excluir_usuario', id=usuario.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deseja excluir este usuário?')">
+                                🗑️ Excluir
+                            </button>
+                        </form>
                     </td>
                 </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5">Nenhum usuário cadastrado.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

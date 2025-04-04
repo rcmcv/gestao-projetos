@@ -2,33 +2,45 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-    <h2>{{ 'Editar' if unidade else 'Nova' }} Unidade de Medida</h2>
+<div class="container mt-4">
+    <h2 class="text-primary mb-4">
+        {% if unidade %}
+            <i class="bi bi-pencil-square"></i> Editar Unidade
+        {% else %}
+            <i class="bi bi-file-earmark-plus-fill"></i> Nova Unidade
+        {% endif %}
+    </h2> 
 
     <form method="POST">
         {{ form.hidden_tag() }}
 
-        <!-- Campo: Nome da Unidade -->
-        <div style="margin-bottom: 10px;">
-            {{ form.descricao.label }}<br>
+        <!-- 📛 Nome -->
+        <div class="mb-3">
+            {{ form.descricao.label(class="form-label") }}
             {{ form.descricao(class="form-control") }}
             {% for erro in form.descricao.errors %}
                 <small class="text-danger">{{ erro }}</small>
             {% endfor %}
         </div>
 
-        <!-- Campo: Sigla da Unidade -->
-        <div style="margin-bottom: 10px;">
-            {{ form.sigla.label }}<br>
+        <!-- 🔠 Sigla -->
+        <div class="mb-4">
+            {{ form.sigla.label(class="form-label") }}
             {{ form.sigla(class="form-control") }}
             {% for erro in form.sigla.errors %}
                 <small class="text-danger">{{ erro }}</small>
             {% endfor %}
         </div>
 
-        <!-- Botões -->
-        <div style="margin-top: 20px;">
-            {{ form.submit(class="btn btn-primary") }}
-            <a href="{{ url_for('web.listar_unidades') }}" class="btn btn-secondary">Cancelar</a>
+        <!-- ✅ Botões -->
+        <div class="row mt-3">
+            <div class="col-md-2 d-grid">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+            <div class="col-md-2 d-grid">
+                <a href="{{ url_for('web.listar_unidades') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
         </div>
     </form>
+</div>
 {% endblock %}
