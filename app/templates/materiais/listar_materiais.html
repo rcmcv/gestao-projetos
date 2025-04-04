@@ -2,43 +2,59 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-<h2>📦 Materiais</h2>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary mb-0">
+            <i class="bi bi-box-seam me-2"></i> Materiais Cadastrados
+        </h2>
+        <div class="col-md-2 d-grid">
+            <a href="{{ url_for('web.novo_material') }}" class="btn btn-success w-100">
+                <i class="bi bi-plus-circle"></i> Novo Cadastro
+            </a>
+        </div>
+    </div>
 
-<p>
-    <a href="{{ url_for('web.novo_material') }}">➕ Novo Material</a>
-    <a href="{{ url_for('web.buscar_materiais_ui') }}">🔍 Buscar Material</a>
-</p>
-
-
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Tipo</th>
-            <th>Unidade</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for material in materiais %}
-        <tr>
-            <td>{{ material.id }}</td>
-            <td>{{ material.nome }}</td>
-            <td>{{ material.tipo.nome }}</td>
-            <td>{{ material.unidade.sigla }}</td>
-            <td>
-                <a href="{{ url_for('web.editar_material', id=material.id) }}">✏️ Editar</a>
-                <form action="{{ url_for('web.excluir_material', id=material.id) }}" method="POST" style="display:inline;">
-                    <button type="submit" onclick="return confirm('Tem certeza que deseja excluir?')">🗑️ Excluir</button>
-                </form>
-            </td>
-        </tr>
-        {% else %}
-        <tr>
-            <td colspan="5">Nenhum material cadastrado.</td>
-        </tr>
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% if mensagens %}
+        {% for categoria, mensagem in mensagens %}
+          <div class="alert alert-{{ categoria }} alert-dismissible fade show" role="alert">
+            {{ mensagem }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+          </div>
         {% endfor %}
-    </tbody>
-</table>
+      {% endif %}
+    {% endwith %}
+
+    <div class="table-responsive shadow-sm">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>Unidade</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for material in materiais %}
+                <tr>
+                    <td>{{ material.nome }}</td>
+                    <td>{{ material.tipo.nome }}</td>
+                    <td>{{ material.unidade.sigla }}</td>
+                    <td class="text-end">
+                        <a href="{{ url_for('web.editar_material', id=material.id) }}" class="btn btn-sm btn-outline-primary me-2">✏️ Editar</a>
+                        <form action="{{ url_for('web.excluir_material', id=material.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deseja excluir este material?')">🗑️ Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">Nenhum material cadastrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

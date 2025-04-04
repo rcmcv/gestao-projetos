@@ -5,7 +5,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary mb-0">
-            <i class="bi bi-boxes"></i> Tipos de Material
+            <i class="bi bi-boxes me-2"></i> Tipos de Material
         </h2>
         <div class="col-md-2 d-grid">
             <a href="{{ url_for('web.adicionar_tipo_material') }}" class="btn btn-success w-100">
@@ -38,13 +38,9 @@
                 <tr>
                     <td>{{ tipo.nome }}</td>
                     <td class="text-end">
-                        <a href="{{ url_for('web.editar_tipo_material', id=tipo.id) }}" class="btn btn-sm btn-outline-primary me-2">
-                            ✏️ Editar
-                        </a>
+                        <a href="{{ url_for('web.editar_tipo_material', id=tipo.id) }}" class="btn btn-sm btn-outline-primary me-2">✏️ Editar</a>
                         <form action="{{ url_for('web.excluir_tipo_material', id=tipo.id) }}" method="POST" style="display:inline;">
-                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deseja excluir este tipo?')">
-                                🗑️ Excluir
-                            </button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deseja excluir este tipo?')">🗑️ Excluir</button>
                         </form>
                     </td>
                 </tr>
